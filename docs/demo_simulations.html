@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_simulations</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-11-08"><meta name="DC.source" content="demo_simulations.m"><style type="text/css">
+      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_simulations</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-01"><meta name="DC.source" content="demo_simulations.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_simulations</h1><!--introduction--><p>This Matlab script performs posterior inference on a (sparse) simulated graph with overlapping communities.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/misxenia/SNetOC">SNetOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2016a. Requires the Statistics toolbox.</p><p>Last Modified: 10/10/2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">General settings</a></li><li><a href="#2">Sample a CGGP graph</a></li><li><a href="#3">Prior distribution</a></li><li><a href="#4">Posterior inference</a></li><li><a href="#7">Plots</a></li></ul></div><h2>General settings<a name="1"></a></h2><pre class="codeinput">close <span class="string">all</span>
+  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_simulations</h1><!--introduction--><p>This Matlab script performs posterior inference on a (sparse) simulated graph with overlapping communities.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/OxCSML-BayesNP/SNetOC">SNetOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2017a. Requires the Statistics toolbox.</p><p>Last Modified: 01/2020</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">General settings</a></li><li><a href="#2">Sample a CGGP graph</a></li><li><a href="#5">Prior distribution</a></li><li><a href="#6">Posterior inference</a></li><li><a href="#11">Plots</a></li></ul></div><h2 id="1">General settings</h2><pre class="codeinput">close <span class="string">all</span>
 clearvars
 
 tstart = clock; <span class="comment">% Starting time</span>
@@ -87,11 +87,13 @@ root = <span class="string">'.'</span>;
 <span class="comment">% Add path</span>
 addpath <span class="string">./GGP/</span> <span class="string">./CGGP/</span> <span class="string">./utils/</span>
 
-set(0, <span class="string">'DefaultAxesFontSize'</span>, 14)
+set(0, <span class="string">'defaultAxesFontSize'</span>, 16)
+set(0, <span class="string">'defaultTextInterpreter'</span>, <span class="string">'latex'</span>);
+set(0, <span class="string">'defaultAxesTickLabelInterpreter'</span>, <span class="string">'latex'</span>);
 
 <span class="comment">% Set the seed</span>
-rng <span class="string">default</span>
-</pre><h2>Sample a CGGP graph<a name="2"></a></h2><pre class="codeinput">titlenetwork = <span class="string">'Simulated simple graph'</span>;
+rng(22)
+</pre><h2 id="2">Sample a CGGP graph</h2><pre class="codeinput">titlenetwork = <span class="string">'Simulated simple graph'</span>;
 name = <span class="string">'simugraph'</span>;
 labels = {<span class="string">'Nodes'</span>, <span class="string">'Nodes'</span>};
 
@@ -99,9 +101,10 @@ labels = {<span class="string">'Nodes'</span>, <span class="string">'Nodes'</spa
 p = 2;
 alpha_true = 200; sigma_true = 0.2; tau_true = 1; observe_all_true = false;
 Fdist_true.name = <span class="string">'gamma'</span>; Fdist_true.param.b = 1/p; Fdist_true.param.a = 0.2;
-obj = graphmodel(<span class="string">'CGGP'</span>, p, alpha_true, sigma_true, tau_true, Fdist_true);
+gamma_true = zeros(p,1);
+obj = graphmodel(<span class="string">'CGGP'</span>, p, alpha_true, sigma_true, tau_true, Fdist_true, gamma_true, <span class="string">'undirected'</span>, observe_all_true);
 <span class="comment">% Sample a CGGP graph</span>
-[G, w_true, w_rem_true] = graphrnd(obj, 1e-6);
+[G, w_true, w_rem_true] = graphrnd(obj, 1e-9);
 
 nnodes = size(G, 1);
 nedges = nnz(G);
@@ -118,22 +121,31 @@ spy(G)
 xlabel(<span class="string">'Nodes'</span>)
 ylabel(<span class="string">'Nodes'</span>)
 title(<span class="string">'Adjacency Matrix'</span>)
-
+</pre><pre class="codeoutput">CGGP graph with 1268 nodes and 7930 edges sampled
+</pre><img vspace="5" hspace="5" src="demo_simulations_01.png" alt=""> <pre class="codeinput"><span class="comment">% Plot the graph by sorting the nodes by max feature</span>
+[~,indk] = max(w_true,[],2);
+[~,ind] = sort(indk, <span class="string">'descend'</span>);
+figure
+spy(G(ind, ind))
+xlabel(<span class="string">'Nodes'</span>)
+ylabel(<span class="string">'Nodes'</span>)
+title(<span class="string">'Sorted Adjacency Matrix'</span>)
+</pre><img vspace="5" hspace="5" src="demo_simulations_02.png" alt=""> <pre class="codeinput"><span class="comment">% Plot degree distribution</span>
 figure(<span class="string">'name'</span>, <span class="string">'Empirical degree distribution'</span>)
 hdeg = plot_degree(G);
 set(hdeg, <span class="string">'markersize'</span>, 10, <span class="string">'marker'</span>, <span class="string">'o'</span>,<span class="string">'markeredgecolor'</span>, <span class="string">'none'</span>, <span class="string">'markerfacecolor'</span>, [1, .75, .75]);
-</pre><pre class="codeoutput">CGGP graph with 1079 nodes and 5679 edges sampled
-</pre><img vspace="5" hspace="5" src="demo_simulations_01.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_02.png" alt=""> <h2>Prior distribution<a name="3"></a></h2><pre class="codeinput">p = 2;
-objprior =  graphmodel(<span class="string">'CGGP'</span>, p);
-</pre><h2>Posterior inference<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Parameters of the MCMC algorithm</span>
+</pre><img vspace="5" hspace="5" src="demo_simulations_03.png" alt=""> <h2 id="5">Prior distribution</h2><pre class="codeinput">objprior =  graphmodel(<span class="string">'CGGP'</span>, p);
+</pre><h2 id="6">Posterior inference</h2><pre class="codeinput"><span class="comment">% Parameters of the MCMC algorithm</span>
 <span class="keyword">if</span> istest
     niterinit = 100;
     niter = 20000;
     nsamples = 100; <span class="comment">% Nb of Monte Carlo samples to return</span>
+    ndraws = 100;
 <span class="keyword">else</span>
     niterinit = 10000;
     niter = 200000;
     nsamples = 500;
+    ndraws = 500;
 <span class="keyword">end</span>
 nburn = floor(3*niter/4); nchains = 3;
 thin = ceil((niter-nburn)/nsamples);
@@ -150,161 +162,149 @@ Start initialisation of the MCMC algorithm for CGGP
 -----------------------------------
 End initialisation
 -----------------------------------
-</pre><pre class="codeinput"><span class="comment">% Run MCMC sampler</span>
-objmcmc = graphmcmcsamples(objmcmc, G, verbose, init);
+</pre><pre class="codeinput">T = 1e-3;
+
+<span class="comment">% Run MCMC sampler</span>
+objmcmc = graphmcmcsamples(objmcmc, G, verbose, init, <span class="string">'T'</span>, T);
 </pre><pre class="codeoutput">-----------------------------------
-Start MCMC for CGGP graphs
-Nb of nodes: 1079 - Nb of edges: 5679 (0 missing)
+Start MCMC for undirected CGGP graphs
+Nb of nodes: 1268x1268 - Nb of edges: 7930 (0 missing)
 Nb of chains: 3 - Nb of iterations: 20000
-Nb of parallel workers: 1
-Estimated computation time: 0 hour(s) 4 minute(s)
-Estimated end of computation: 08-Nov-2017 18:10:00 
+Estimated computation time: 0 hour(s) 7 minute(s)
+Estimated end of computation: 01-Feb-2020 17:57:09 
 -----------------------------------
  Markov chain 1/3 
 -----------------------------------
-i=2000 alp=136.49 sig=0.239 tau=1.10 a=0.37 0.42 b=0.76 0.93 w*=1.25 1.49 b2=0.83 1.02 alp2=139.77 rhmc=0.83 rhyp=0.56 eps=0.027 rwsd=0.02
-i=4000 alp=134.96 sig=0.263 tau=1.05 a=0.25 0.37 b=0.40 0.67 w*=1.54 1.62 b2=0.42 0.70 alp2=136.81 rhmc=0.78 rhyp=0.59 eps=0.027 rwsd=0.02
-i=6000 alp=145.91 sig=0.222 tau=1.24 a=0.22 0.27 b=0.34 0.43 w*=1.16 1.40 b2=0.42 0.54 alp2=153.11 rhmc=0.78 rhyp=0.60 eps=0.027 rwsd=0.02
-i=8000 alp=150.12 sig=0.243 tau=1.09 a=0.24 0.27 b=0.36 0.58 w*=1.40 1.41 b2=0.39 0.63 alp2=153.14 rhmc=0.76 rhyp=0.61 eps=0.027 rwsd=0.02
-i=10000 alp=200.69 sig=0.181 tau=1.92 a=0.24 0.28 b=0.44 0.51 w*=1.48 1.45 b2=0.84 0.99 alp2=225.94 rhmc=0.77 rhyp=0.59 eps=0.027 rwsd=0.02
-i=12000 alp=211.24 sig=0.152 tau=2.21 a=0.22 0.26 b=0.31 0.41 w*=1.48 1.51 b2=0.69 0.91 alp2=238.27 rhmc=0.76 rhyp=0.60 eps=0.027 rwsd=0.02
-i=14000 alp=208.43 sig=0.166 tau=2.16 a=0.25 0.25 b=0.44 0.45 w*=1.42 1.50 b2=0.96 0.96 alp2=236.93 rhmc=0.76 rhyp=0.61 eps=0.027 rwsd=0.02
-i=16000 alp=225.19 sig=0.141 tau=2.19 a=0.23 0.23 b=0.48 0.49 w*=1.14 1.37 b2=1.06 1.07 alp2=251.49 rhmc=0.78 rhyp=0.61 eps=0.027 rwsd=0.02
-i=18000 alp=224.65 sig=0.148 tau=2.02 a=0.21 0.22 b=0.47 0.53 w*=1.40 1.32 b2=0.95 1.07 alp2=249.24 rhmc=0.78 rhyp=0.62 eps=0.027 rwsd=0.02
-i=20000 alp=214.54 sig=0.179 tau=1.67 a=0.24 0.23 b=0.51 0.52 w*=1.55 1.50 b2=0.86 0.87 alp2=235.14 rhmc=0.79 rhyp=0.62 eps=0.027 rwsd=0.02
+i=2000 alp=143.51 sig=0.247 tau=0.98 a=0.41 0.35 b=0.94 0.67 w*=1.47 1.19 b2=0.92 0.66 alp2=142.97 rhmc=0.66 rhyp=0.51 eps=0.025 rwsd=0.02
+i=4000 alp=135.02 sig=0.263 tau=0.97 a=0.33 0.31 b=0.63 0.54 w*=1.34 1.18 b2=0.61 0.52 alp2=133.82 rhmc=0.51 rhyp=0.55 eps=0.025 rwsd=0.02
+i=6000 alp=160.56 sig=0.211 tau=1.26 a=0.30 0.28 b=0.64 0.52 w*=1.29 1.06 b2=0.81 0.66 alp2=168.69 rhmc=0.45 rhyp=0.57 eps=0.025 rwsd=0.02
+i=8000 alp=164.70 sig=0.226 tau=1.35 a=0.26 0.26 b=0.45 0.42 w*=1.36 1.11 b2=0.61 0.57 alp2=176.22 rhmc=0.45 rhyp=0.55 eps=0.025 rwsd=0.02
+i=10000 alp=123.12 sig=0.282 tau=1.37 a=0.26 0.30 b=0.37 0.49 w*=1.30 1.08 b2=0.50 0.66 alp2=134.47 rhmc=0.50 rhyp=0.57 eps=0.025 rwsd=0.02
+i=12000 alp=152.43 sig=0.237 tau=1.30 a=0.25 0.25 b=0.34 0.37 w*=1.36 1.11 b2=0.45 0.49 alp2=162.25 rhmc=0.47 rhyp=0.57 eps=0.025 rwsd=0.02
+i=14000 alp=145.59 sig=0.244 tau=1.06 a=0.26 0.22 b=0.41 0.33 w*=1.23 1.15 b2=0.44 0.35 alp2=147.75 rhmc=0.44 rhyp=0.57 eps=0.025 rwsd=0.02
+i=16000 alp=163.92 sig=0.243 tau=1.17 a=0.22 0.22 b=0.38 0.37 w*=1.27 1.16 b2=0.45 0.43 alp2=170.38 rhmc=0.42 rhyp=0.57 eps=0.025 rwsd=0.02
+i=18000 alp=140.85 sig=0.259 tau=0.96 a=0.24 0.22 b=0.44 0.32 w*=1.38 1.20 b2=0.43 0.31 alp2=139.48 rhmc=0.46 rhyp=0.57 eps=0.025 rwsd=0.02
+i=20000 alp=157.80 sig=0.249 tau=0.81 a=0.23 0.23 b=0.46 0.37 w*=1.25 1.28 b2=0.37 0.30 alp2=149.82 rhmc=0.43 rhyp=0.56 eps=0.025 rwsd=0.02
 -----------------------------------
  Markov chain 2/3 
 -----------------------------------
-i=2000 alp=62.14 sig=0.335 tau=1.34 a=0.44 0.33 b=0.31 0.16 w*=1.51 1.81 b2=0.41 0.22 alp2=68.62 rhmc=0.83 rhyp=0.53 eps=0.027 rwsd=0.02
-i=4000 alp=81.95 sig=0.286 tau=1.29 a=0.36 0.29 b=0.25 0.17 w*=1.41 1.46 b2=0.32 0.22 alp2=88.11 rhmc=0.78 rhyp=0.58 eps=0.027 rwsd=0.02
-i=6000 alp=74.46 sig=0.298 tau=1.45 a=0.31 0.34 b=0.20 0.20 w*=1.44 1.42 b2=0.29 0.30 alp2=83.15 rhmc=0.77 rhyp=0.58 eps=0.027 rwsd=0.02
-i=8000 alp=85.08 sig=0.295 tau=1.18 a=0.24 0.31 b=0.14 0.23 w*=1.47 1.54 b2=0.17 0.28 alp2=89.38 rhmc=0.79 rhyp=0.59 eps=0.027 rwsd=0.02
-i=10000 alp=104.65 sig=0.257 tau=1.60 a=0.26 0.26 b=0.18 0.20 w*=1.52 1.29 b2=0.30 0.32 alp2=118.14 rhmc=0.78 rhyp=0.60 eps=0.027 rwsd=0.02
-i=12000 alp=141.80 sig=0.224 tau=1.65 a=0.28 0.29 b=0.42 0.37 w*=1.49 1.52 b2=0.70 0.61 alp2=158.72 rhmc=0.78 rhyp=0.59 eps=0.027 rwsd=0.02
-i=14000 alp=171.99 sig=0.203 tau=2.45 a=0.25 0.24 b=0.33 0.32 w*=1.67 1.41 b2=0.81 0.79 alp2=206.30 rhmc=0.78 rhyp=0.60 eps=0.027 rwsd=0.02
-i=16000 alp=170.11 sig=0.186 tau=2.23 a=0.29 0.21 b=0.37 0.26 w*=1.51 1.27 b2=0.83 0.57 alp2=197.57 rhmc=0.77 rhyp=0.60 eps=0.027 rwsd=0.02
-i=18000 alp=169.84 sig=0.179 tau=2.65 a=0.25 0.23 b=0.30 0.26 w*=1.59 1.27 b2=0.80 0.68 alp2=202.25 rhmc=0.77 rhyp=0.61 eps=0.027 rwsd=0.02
-i=20000 alp=224.32 sig=0.114 tau=3.00 a=0.24 0.26 b=0.30 0.31 w*=1.24 1.20 b2=0.89 0.93 alp2=254.32 rhmc=0.77 rhyp=0.62 eps=0.027 rwsd=0.02
+i=2000 alp=137.35 sig=0.258 tau=0.93 a=0.35 0.31 b=0.68 0.50 w*=1.26 1.25 b2=0.64 0.47 alp2=134.82 rhmc=0.60 rhyp=0.54 eps=0.025 rwsd=0.02
+i=4000 alp=131.79 sig=0.267 tau=1.05 a=0.30 0.27 b=0.48 0.38 w*=1.35 1.23 b2=0.50 0.40 alp2=133.47 rhmc=0.47 rhyp=0.57 eps=0.025 rwsd=0.02
+i=6000 alp=130.18 sig=0.245 tau=0.99 a=0.29 0.27 b=0.45 0.35 w*=1.21 1.01 b2=0.45 0.35 alp2=129.84 rhmc=0.45 rhyp=0.57 eps=0.025 rwsd=0.02
+i=8000 alp=128.30 sig=0.266 tau=0.93 a=0.28 0.23 b=0.45 0.33 w*=1.41 1.10 b2=0.42 0.31 alp2=125.90 rhmc=0.46 rhyp=0.56 eps=0.025 rwsd=0.02
+i=10000 alp=125.54 sig=0.275 tau=1.08 a=0.27 0.22 b=0.39 0.29 w*=1.28 1.16 b2=0.42 0.31 alp2=128.30 rhmc=0.46 rhyp=0.58 eps=0.025 rwsd=0.02
+i=12000 alp=122.92 sig=0.284 tau=1.15 a=0.28 0.22 b=0.53 0.24 w*=1.31 1.17 b2=0.61 0.27 alp2=128.03 rhmc=0.49 rhyp=0.57 eps=0.025 rwsd=0.02
+i=14000 alp=117.72 sig=0.267 tau=1.30 a=0.27 0.20 b=0.34 0.19 w*=1.17 1.23 b2=0.44 0.25 alp2=126.13 rhmc=0.49 rhyp=0.57 eps=0.025 rwsd=0.02
+i=16000 alp=123.82 sig=0.265 tau=1.41 a=0.27 0.23 b=0.28 0.24 w*=1.47 1.10 b2=0.40 0.33 alp2=135.68 rhmc=0.46 rhyp=0.57 eps=0.025 rwsd=0.02
+i=18000 alp=117.33 sig=0.264 tau=1.77 a=0.23 0.20 b=0.20 0.15 w*=1.41 0.97 b2=0.36 0.27 alp2=136.47 rhmc=0.50 rhyp=0.57 eps=0.025 rwsd=0.02
+i=20000 alp=116.99 sig=0.261 tau=1.94 a=0.23 0.18 b=0.22 0.15 w*=1.28 1.12 b2=0.43 0.30 alp2=139.09 rhmc=0.40 rhyp=0.59 eps=0.025 rwsd=0.02
 -----------------------------------
  Markov chain 3/3 
 -----------------------------------
-i=2000 alp=167.41 sig=0.215 tau=1.06 a=0.34 0.32 b=0.77 0.73 w*=1.57 1.62 b2=0.82 0.77 alp2=169.65 rhmc=0.80 rhyp=0.55 eps=0.027 rwsd=0.02
-i=4000 alp=185.02 sig=0.166 tau=0.99 a=0.30 0.27 b=0.70 0.70 w*=1.15 1.38 b2=0.69 0.69 alp2=184.65 rhmc=0.79 rhyp=0.61 eps=0.027 rwsd=0.02
-i=6000 alp=146.99 sig=0.242 tau=0.83 a=0.33 0.26 b=0.74 0.51 w*=1.37 1.32 b2=0.61 0.42 alp2=140.45 rhmc=0.81 rhyp=0.59 eps=0.027 rwsd=0.02
-i=8000 alp=122.27 sig=0.284 tau=0.73 a=0.28 0.24 b=0.56 0.49 w*=1.41 1.39 b2=0.41 0.36 alp2=111.94 rhmc=0.79 rhyp=0.59 eps=0.027 rwsd=0.02
-i=10000 alp=152.58 sig=0.250 tau=0.75 a=0.24 0.24 b=0.59 0.65 w*=1.51 1.58 b2=0.44 0.49 alp2=141.79 rhmc=0.78 rhyp=0.60 eps=0.027 rwsd=0.02
-i=12000 alp=192.84 sig=0.190 tau=0.81 a=0.24 0.26 b=0.74 0.94 w*=1.55 1.35 b2=0.60 0.76 alp2=185.31 rhmc=0.76 rhyp=0.61 eps=0.027 rwsd=0.02
-i=14000 alp=170.14 sig=0.208 tau=0.77 a=0.24 0.24 b=0.55 0.57 w*=1.35 1.41 b2=0.42 0.44 alp2=161.07 rhmc=0.78 rhyp=0.60 eps=0.027 rwsd=0.02
-i=16000 alp=231.46 sig=0.158 tau=0.86 a=0.22 0.23 b=0.68 0.71 w*=1.39 1.64 b2=0.58 0.61 alp2=226.16 rhmc=0.78 rhyp=0.61 eps=0.027 rwsd=0.02
-i=18000 alp=188.75 sig=0.203 tau=0.73 a=0.25 0.26 b=0.79 0.85 w*=1.47 1.35 b2=0.58 0.62 alp2=177.04 rhmc=0.78 rhyp=0.60 eps=0.027 rwsd=0.02
-i=20000 alp=193.44 sig=0.183 tau=0.68 a=0.25 0.26 b=0.81 0.93 w*=1.22 1.39 b2=0.56 0.64 alp2=180.46 rhmc=0.81 rhyp=0.61 eps=0.027 rwsd=0.02
+i=2000 alp=121.03 sig=0.267 tau=0.77 a=0.36 0.34 b=0.57 0.55 w*=1.11 1.21 b2=0.44 0.42 alp2=112.86 rhmc=0.65 rhyp=0.52 eps=0.025 rwsd=0.02
+i=4000 alp=109.81 sig=0.279 tau=0.83 a=0.31 0.33 b=0.41 0.42 w*=1.08 1.38 b2=0.34 0.35 alp2=104.25 rhmc=0.43 rhyp=0.54 eps=0.025 rwsd=0.02
+i=6000 alp=99.18 sig=0.301 tau=0.84 a=0.28 0.31 b=0.33 0.38 w*=1.13 1.30 b2=0.28 0.32 alp2=94.19 rhmc=0.47 rhyp=0.58 eps=0.025 rwsd=0.02
+i=8000 alp=103.69 sig=0.294 tau=0.89 a=0.28 0.28 b=0.31 0.38 w*=1.16 1.19 b2=0.28 0.34 alp2=100.27 rhmc=0.48 rhyp=0.56 eps=0.025 rwsd=0.02
+i=10000 alp=102.40 sig=0.292 tau=1.01 a=0.25 0.26 b=0.26 0.32 w*=1.14 1.27 b2=0.26 0.32 alp2=102.76 rhmc=0.43 rhyp=0.58 eps=0.025 rwsd=0.02
+i=12000 alp=109.63 sig=0.285 tau=1.20 a=0.25 0.23 b=0.24 0.26 w*=1.27 1.31 b2=0.29 0.31 alp2=115.45 rhmc=0.45 rhyp=0.57 eps=0.025 rwsd=0.02
+i=14000 alp=122.40 sig=0.268 tau=1.31 a=0.26 0.20 b=0.29 0.21 w*=1.19 1.27 b2=0.38 0.28 alp2=131.57 rhmc=0.48 rhyp=0.58 eps=0.025 rwsd=0.02
+i=16000 alp=113.57 sig=0.277 tau=1.45 a=0.25 0.20 b=0.24 0.21 w*=1.14 1.16 b2=0.35 0.30 alp2=125.91 rhmc=0.51 rhyp=0.57 eps=0.025 rwsd=0.02
+i=18000 alp=115.09 sig=0.282 tau=1.48 a=0.26 0.19 b=0.24 0.18 w*=1.19 1.36 b2=0.35 0.26 alp2=128.48 rhmc=0.45 rhyp=0.58 eps=0.025 rwsd=0.02
+i=20000 alp=114.65 sig=0.265 tau=1.59 a=0.23 0.17 b=0.18 0.12 w*=1.14 1.30 b2=0.28 0.19 alp2=129.56 rhmc=0.44 rhyp=0.58 eps=0.025 rwsd=0.02
 -----------------------------------
 End MCMC
-Computation time: 0 hour(s) 4 minute(s)
+Computation time: 0 hour(s) 10 minute(s)
 -----------------------------------
-</pre><pre class="codeinput"><span class="comment">% Print summary in text file</span>
-print_summary([<span class="string">'summary_'</span> num2str(p) <span class="string">'f.txt'</span>], titlenetwork, G, niter, nburn, nchains, thin, p, outpath, tstart)
+</pre><pre class="codeinput"><span class="comment">% True log-posterior</span>
+<span class="keyword">if</span> sigma_true&gt;0
+    objprior.param.observe_all = false;
+<span class="keyword">end</span>
+[lp_nonlat_true, ll_nonlat_true] = logpostcggp_approx_true(G, objprior, <span class="keyword">...</span>
+    w_true, alpha_true, sigma_true, tau_true, Fdist_true, gamma_true);
 
-<span class="comment">% discard burnin to compute estimates</span>
-objmcmc_all = objmcmc;
-objmcmc.samples = discard(objmcmc_all.samples, floor(nburn/objmcmc_all.settings.thin));
-objmcmc.settings.nburn = nburn;
+<span class="comment">% compute log-posterior</span>
+[lp_nonlat, lp_lat, ll_nonlat, ll_lat] = logpost_approx(objmcmc, G);
+</pre><pre class="codeinput"><span class="comment">% discard burnin to compute estimates</span>
+objmcmc_noburn = objmcmc;
+objmcmc_noburn.samples = discard(objmcmc.samples, floor(nburn/objmcmc.settings.thin));
+objmcmc_noburn.settings.nburn = nburn;
 
 <span class="comment">% Get estimates and cost</span>
-[estimates, C_st] = graphest(objmcmc);
-
-<span class="comment">% Save workspace</span>
-save(fullfile(outpath, [<span class="string">'workspace_'</span> num2str(p) <span class="string">'f.mat'</span>]))
+[estimates, C_st] = graphest(objmcmc_noburn);
 </pre><pre class="codeoutput">-----------------------------------
 Start parameters estimation for CGGP graphs: 300 samples
-Estimated end of computation: 08-Nov-2017 18:10:37 (0.0 hours)
+Estimated end of computation: 01-Feb-2020 18:01:26 (0.0 hours)
 |---------------------------------|
 |*********************************|
 End parameters estimation for CGGP graphs
 Computation time: 0.0 hours
 -----------------------------------
-</pre><h2>Plots<a name="7"></a></h2><pre class="codeinput">prefix = sprintf(<span class="string">'%s_%df_'</span>, name, p);
+</pre><pre class="codeinput"><span class="comment">% Print summary in text file</span>
+print_summary([<span class="string">'summary_'</span> num2str(p) <span class="string">'f.txt'</span>], titlenetwork, G, niter, nburn, nchains, thin, p, outpath, tstart)
+
+<span class="comment">% Save workspace</span>
+objmcmc.stats = [];
+save(fullfile(outpath, [<span class="string">'workspace_'</span> num2str(p) <span class="string">'f.mat'</span>]), <span class="string">'-v7.3'</span>)
+</pre><h2 id="11">Plots</h2><pre class="codeinput">prefix = sprintf(<span class="string">'%s_%df_'</span>, name, p);
 suffix = <span class="string">''</span>;
 
 <span class="comment">% Plot cost</span>
 plot_cost(C_st, outpath, prefix, suffix);
+</pre><img vspace="5" hspace="5" src="demo_simulations_04.png" alt=""> <pre class="codeinput"><span class="comment">% Plot log-posterior</span>
+iter = (1:size(lp_nonlat,1))*thin;
+plot_logpost(lp_nonlat, iter, lp_nonlat_true, <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_nonlat'</span>);
+plot_logpost(lp_lat, iter, [], <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_lat'</span>);
 
-<span class="comment">% Assign max feature</span>
-[~, nodefeat] = max(estimates.w, [],2);
+<span class="comment">% Plot log-posterior autocorr</span>
+lp_nonlat_noburn = lp_nonlat(floor(nburn/niter*size(lp_nonlat, 1)):end, :);
+lp_lat_noburn = lp_lat(floor(nburn/niter*size(lp_lat, 1)):end, :);
+plot_autocorr_logpost(lp_nonlat_noburn, thin, <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_nonlat'</span>);
+plot_autocorr_logpost(lp_lat_noburn, thin, <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_lat'</span>);
+</pre><img vspace="5" hspace="5" src="demo_simulations_05.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_06.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_07.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_08.png" alt=""> <pre class="codeinput"><span class="comment">% Plot traces and histograms</span>
 
 <span class="comment">% order features</span>
 ind_features = 1:p;
-</pre><img vspace="5" hspace="5" src="demo_simulations_03.png" alt=""> <pre class="codeinput"><span class="comment">% Plot traces and histograms</span>
-variables = {<span class="string">'logalpha2'</span>, <span class="string">'sigma'</span>, <span class="string">'Fparam.a'</span>, <span class="string">'Fparam.b2'</span>, <span class="string">'mean_w_rem'</span>};
-namesvar = {<span class="string">'$\log \tilde\alpha$'</span>, <span class="string">'$\sigma$'</span>, <span class="string">'$a$'</span>, <span class="string">'$\tilde b$'</span>, <span class="string">'$\overline{w}_{\ast}$'</span>};
-trueval = {log(alpha_true)+sigma_true*log(tau_true), sigma_true,Fdist_true.param.a, tau_true*Fdist_true.param.b, mean(w_rem_true)};
-plot_trace(objmcmc_all.samples, objmcmc_all.settings, variables, namesvar, trueval, outpath, prefix, suffix);
-plot_hist(objmcmc.samples, variables, namesvar, trueval, ind_features, [], outpath, prefix, suffix);
-</pre><img vspace="5" hspace="5" src="demo_simulations_04.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_05.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_06.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_07.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_08.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_09.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_10.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_11.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_12.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_13.png" alt=""> <pre class="codeinput"><span class="comment">% Plot the graph by sorting the nodes by max feature</span>
-[~,indk] = max(w_true,[],2);
-[~,ind] = sort(indk, <span class="string">'descend'</span>);
-figure
-spy(G(ind, ind))
-xlabel(<span class="string">'Nodes'</span>)
-ylabel(<span class="string">'Nodes'</span>)
-title(<span class="string">'Sorted Adjacency Matrix'</span>)
-</pre><img vspace="5" hspace="5" src="demo_simulations_14.png" alt=""> <pre class="codeinput"><span class="comment">% Plot posterior predictive of degrees</span>
-<span class="keyword">if</span> istest
-    ndraws = 100;
+
+<span class="keyword">if</span> sigma_true&lt;0
+    varsigma1_true = -alpha_true.*tau_true.^sigma_true./sigma_true;
+    varsigma2_true = -sigma_true.*Fdist_true.param.a./(tau_true.*Fdist_true.param.b);
+    varsigma3_true = sigma_true.*Fdist_true.param.a.*(sigma_true-Fdist_true.param.a-1)/(tau_true.*Fdist_true.param.b).^2;
+    mean_w_rem_true = mean(w_rem_true);
+
+    variables = {<span class="string">'varsigma1'</span>, <span class="string">'varsigma2'</span>, <span class="string">'varsigma3'</span>, <span class="string">'mean_w_rem'</span>};
+    namesvar = {<span class="string">'$\varsigma_1$'</span>, <span class="string">'$\varsigma_2$'</span>, <span class="string">'$\varsigma_3$'</span>, <span class="string">'$\overline{w}_{\ast}$'</span>};
+    trueval = {varsigma1_true, varsigma2_true, varsigma3_true, mean_w_rem_true};
+    plot_trace(objmcmc.samples, objmcmc.settings, variables, namesvar, trueval, outpath, prefix, suffix);
+    plot_hist(objmcmc_noburn.samples, variables, namesvar, trueval, ind_features, [], outpath, prefix, suffix);
 <span class="keyword">else</span>
-    ndraws = 5000;
+    logalpha2_true = log(alpha_true)+sigma_true*log(tau_true);
+    b2_true = tau_true*Fdist_true.param.b;
+    mean_w_rem_true = mean(w_rem_true);
+
+    variables = {<span class="string">'logalpha2'</span>, <span class="string">'sigma'</span>, <span class="string">'Fparam.a'</span>, <span class="string">'Fparam.b2'</span>, <span class="string">'mean_w_rem'</span>};
+    namesvar = {<span class="string">'$\log \tilde\alpha$'</span>, <span class="string">'$\sigma$'</span>, <span class="string">'$a$'</span>, <span class="string">'$\tilde b$'</span>, <span class="string">'$\overline{w}_{\ast}$'</span>};
+    trueval = {logalpha2_true, sigma_true, Fdist_true.param.a, b2_true, mean_w_rem_true};
+    plot_trace(objmcmc.samples, objmcmc.settings, variables, namesvar, trueval, outpath, prefix, suffix);
+    plot_hist(objmcmc_noburn.samples, variables, namesvar, trueval, ind_features, [], outpath, prefix, suffix);
 <span class="keyword">end</span>
-plot_degreepostpred(G, objmcmc, ndraws, 1e-6, outpath, prefix, suffix);
+</pre><img vspace="5" hspace="5" src="demo_simulations_09.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_10.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_11.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_12.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_13.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_14.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_15.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_16.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_17.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_18.png" alt=""> <p>Plot credible intervals for the weights</p><pre class="codeinput">plot_mean_w_ci(G, objmcmc.samples(1).mean_w, w_true, outpath, prefix, suffix)
+</pre><img vspace="5" hspace="5" src="demo_simulations_19.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_20.png" alt=""> <pre class="codeinput"><span class="comment">% Plot posterior predictive of degrees</span>
+plot_degreepostpred(G, objmcmc_noburn, ndraws, 1e-6, outpath, prefix, suffix);
 </pre><pre class="codeoutput">-----------------------------------
 Start degree posterior predictive estimation: 100 draws
-Estimated end of computation: 08-Nov-2017 18:10:48 (0.0 hours)
+Estimated end of computation: 01-Feb-2020 18:02:07 (0.0 hours)
 |---------------------------------|
 |*********************************|
 End degree posterior predictive (0.0 hours)
 -----------------------------------
-</pre><img vspace="5" hspace="5" src="demo_simulations_15.png" alt=""> <pre class="codeinput"><span class="comment">% Plot credible intervals for the weights</span>
-[~, ind] = sort(sum(G, 2)+sum(G, 1)', <span class="string">'descend'</span>);
-mean_w_true = mean(w_true,2);
-
-<span class="comment">% High degree nodes</span>
-figure(<span class="string">'name'</span>,<span class="string">'Credible intervals - high degree nodes'</span>); hold <span class="string">on</span>
-<span class="keyword">for</span> i=1:min(nnodes(1), 50)
-    plot([i, i],quantile(objmcmc.samples(1).mean_w(ind(i), :, :),[.025,.975]), <span class="string">'r'</span>,<span class="string">'linewidth'</span>, 3);
-    hold <span class="string">on</span>
-    plot(i, mean_w_true(ind(i)), <span class="string">'xg'</span>, <span class="string">'linewidth'</span>, 2)
-<span class="keyword">end</span>
-xlim([0.1, min(nnodes(1), 50)+.5])
-box <span class="string">off</span>
-ylabel(<span class="string">'Mean sociability parameters'</span>, <span class="string">'fontsize'</span>, 16)
-xlabel(<span class="string">'Index of node (sorted by dec. degree)'</span>, <span class="string">'fontsize'</span>, 16)
-legend(<span class="string">'95% credible intervals'</span>, <span class="string">'True value'</span>, <span class="string">'location'</span>, <span class="string">'northeast'</span>)
-legend <span class="string">boxoff</span>
-[~, ind] = sort(sum(G, 2)+sum(G, 1)', <span class="string">'descend'</span>);
-
-<span class="comment">% Low degree nodes</span>
-figure(<span class="string">'name'</span>,<span class="string">'Credible intervals - low degree nodes'</span>); hold <span class="string">on</span>
-<span class="keyword">for</span> i=max(1,nnodes(1)-50+1):nnodes(1)
-    plot([i, i],<span class="keyword">...</span>
-        quantile(log(objmcmc.samples(1).mean_w(ind(i), :, :)),[.025,.975]), <span class="string">'r'</span>, <span class="keyword">...</span>
-        <span class="string">'linewidth'</span>, 3);
-    hold <span class="string">on</span>
-    plot(i, log(mean_w_true(ind(i))), <span class="string">'xg'</span>, <span class="string">'linewidth'</span>, 2)
-<span class="keyword">end</span>
-xlim([max(1,nnodes(1)-50+1)-.5, nnodes(1)+.5])
-ylim([-12, -4])
-box <span class="string">off</span>
-ylabel(<span class="string">'Log mean sociability parameters'</span>, <span class="string">'fontsize'</span>, 16)
-xlabel(<span class="string">'Index of node (sorted by dec. degree)'</span>, <span class="string">'fontsize'</span>, 16)
-legend(<span class="string">'95% credible intervals'</span>, <span class="string">'True value'</span>, <span class="string">'location'</span>, <span class="string">'southeast'</span>)
-legend <span class="string">boxoff</span>
-</pre><img vspace="5" hspace="5" src="demo_simulations_16.png" alt=""> <img vspace="5" hspace="5" src="demo_simulations_17.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="demo_simulations_21.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Sparse Networks with Overlapping Communities (SNetOC) package: demo_simulations
 %
 % This Matlab script performs posterior inference on a (sparse) simulated graph with overlapping communities.
 %
 % For downloading the package and information on installation, visit the
-% <https://github.com/misxenia/SNetOC SNetOC webpage>.
+% <https://github.com/OxCSML-BayesNP/SNetOC SNetOC webpage>.
 % 
 % Reference: 
 %
@@ -316,9 +316,9 @@ legend <span class="string">boxoff</span>
 % * <http://csml.stats.ox.ac.uk/people/miscouridou/ X. Miscouridou>, University of Oxford
 % * <http://www.stats.ox.ac.uk/~caron/ F. Caron>, University of Oxford
 % 
-% Tested on Matlab R2016a. Requires the Statistics toolbox.
+% Tested on Matlab R2017a. Requires the Statistics toolbox.
 %
-% Last Modified: 10/10/2017
+% Last Modified: 01/2020
 %%
 
 %% General settings
@@ -345,10 +345,12 @@ end
 % Add path
 addpath ./GGP/ ./CGGP/ ./utils/ 
 
-set(0, 'DefaultAxesFontSize', 14)
+set(0, 'defaultAxesFontSize', 16)
+set(0, 'defaultTextInterpreter', 'latex');
+set(0, 'defaultAxesTickLabelInterpreter', 'latex');
 
 % Set the seed
-rng default
+rng(22)
 
 %% Sample a CGGP graph
 %
@@ -361,9 +363,10 @@ labels = {'Nodes', 'Nodes'};
 p = 2;
 alpha_true = 200; sigma_true = 0.2; tau_true = 1; observe_all_true = false;
 Fdist_true.name = 'gamma'; Fdist_true.param.b = 1/p; Fdist_true.param.a = 0.2;
-obj = graphmodel('CGGP', p, alpha_true, sigma_true, tau_true, Fdist_true);
+gamma_true = zeros(p,1);
+obj = graphmodel('CGGP', p, alpha_true, sigma_true, tau_true, Fdist_true, gamma_true, 'undirected', observe_all_true);
 % Sample a CGGP graph
-[G, w_true, w_rem_true] = graphrnd(obj, 1e-6);
+[G, w_true, w_rem_true] = graphrnd(obj, 1e-9);
 
 nnodes = size(G, 1);
 nedges = nnz(G);
@@ -381,6 +384,20 @@ xlabel('Nodes')
 ylabel('Nodes')
 title('Adjacency Matrix')
 
+%%
+
+% Plot the graph by sorting the nodes by max feature
+[~,indk] = max(w_true,[],2);
+[~,ind] = sort(indk, 'descend');
+figure
+spy(G(ind, ind))
+xlabel('Nodes')
+ylabel('Nodes')
+title('Sorted Adjacency Matrix')
+
+%%
+
+% Plot degree distribution
 figure('name', 'Empirical degree distribution')
 hdeg = plot_degree(G);
 set(hdeg, 'markersize', 10, 'marker', 'o','markeredgecolor', 'none', 'markerfacecolor', [1, .75, .75]);
@@ -388,7 +405,6 @@ set(hdeg, 'markersize', 10, 'marker', 'o','markeredgecolor', 'none', 'markerface
 %% Prior distribution
 % 
 
-p = 2;
 objprior =  graphmodel('CGGP', p);
 
 %% Posterior inference
@@ -399,10 +415,12 @@ if istest
     niterinit = 100;
     niter = 20000;
     nsamples = 100; % Nb of Monte Carlo samples to return
+    ndraws = 100;
 else
     niterinit = 10000;
     niter = 200000;
     nsamples = 500;
+    ndraws = 500;
 end   
 nburn = floor(3*niter/4); nchains = 3;
 thin = ceil((niter-nburn)/nsamples);
@@ -417,24 +435,41 @@ init = graphinit(objmcmc, G, niterinit);
 
 %%
 
+T = 1e-3;
+
 % Run MCMC sampler
-objmcmc = graphmcmcsamples(objmcmc, G, verbose, init);
+objmcmc = graphmcmcsamples(objmcmc, G, verbose, init, 'T', T);
+
+%%
+
+% True log-posterior
+if sigma_true>0
+    objprior.param.observe_all = false;
+end
+[lp_nonlat_true, ll_nonlat_true] = logpostcggp_approx_true(G, objprior, ...
+    w_true, alpha_true, sigma_true, tau_true, Fdist_true, gamma_true);
+
+% compute log-posterior
+[lp_nonlat, lp_lat, ll_nonlat, ll_lat] = logpost_approx(objmcmc, G);
+
+%%
+
+% discard burnin to compute estimates
+objmcmc_noburn = objmcmc;
+objmcmc_noburn.samples = discard(objmcmc.samples, floor(nburn/objmcmc.settings.thin));
+objmcmc_noburn.settings.nburn = nburn;
+
+% Get estimates and cost
+[estimates, C_st] = graphest(objmcmc_noburn);
 
 %%
 
 % Print summary in text file
 print_summary(['summary_' num2str(p) 'f.txt'], titlenetwork, G, niter, nburn, nchains, thin, p, outpath, tstart)
 
-% discard burnin to compute estimates
-objmcmc_all = objmcmc;
-objmcmc.samples = discard(objmcmc_all.samples, floor(nburn/objmcmc_all.settings.thin));
-objmcmc.settings.nburn = nburn;
-
-% Get estimates and cost
-[estimates, C_st] = graphest(objmcmc);
-
 % Save workspace
-save(fullfile(outpath, ['workspace_' num2str(p) 'f.mat']))
+objmcmc.stats = [];
+save(fullfile(outpath, ['workspace_' num2str(p) 'f.mat']), '-v7.3')
 
 %% Plots
 %
@@ -445,78 +480,58 @@ suffix = '';
 % Plot cost
 plot_cost(C_st, outpath, prefix, suffix);
 
-% Assign max feature
-[~, nodefeat] = max(estimates.w, [],2);
+%%
 
-% order features 
-ind_features = 1:p;
+% Plot log-posterior
+iter = (1:size(lp_nonlat,1))*thin;
+plot_logpost(lp_nonlat, iter, lp_nonlat_true, 'Log-posterior', outpath, prefix, '_nonlat');
+plot_logpost(lp_lat, iter, [], 'Log-posterior', outpath, prefix, '_lat');
+
+% Plot log-posterior autocorr
+lp_nonlat_noburn = lp_nonlat(floor(nburn/niter*size(lp_nonlat, 1)):end, :);
+lp_lat_noburn = lp_lat(floor(nburn/niter*size(lp_lat, 1)):end, :);
+plot_autocorr_logpost(lp_nonlat_noburn, thin, 'Log-posterior', outpath, prefix, '_nonlat');
+plot_autocorr_logpost(lp_lat_noburn, thin, 'Log-posterior', outpath, prefix, '_lat');
+
 
 %%
 
 % Plot traces and histograms
-variables = {'logalpha2', 'sigma', 'Fparam.a', 'Fparam.b2', 'mean_w_rem'};
-namesvar = {'$\log \tilde\alpha$', '$\sigma$', '$a$', '$\tilde b$', '$\overline{w}_{\ast}$'};
-trueval = {log(alpha_true)+sigma_true*log(tau_true), sigma_true,Fdist_true.param.a, tau_true*Fdist_true.param.b, mean(w_rem_true)};
-plot_trace(objmcmc_all.samples, objmcmc_all.settings, variables, namesvar, trueval, outpath, prefix, suffix);
-plot_hist(objmcmc.samples, variables, namesvar, trueval, ind_features, [], outpath, prefix, suffix);
+
+% order features 
+ind_features = 1:p;
+
+if sigma_true<0
+    varsigma1_true = -alpha_true.*tau_true.^sigma_true./sigma_true;
+    varsigma2_true = -sigma_true.*Fdist_true.param.a./(tau_true.*Fdist_true.param.b);
+    varsigma3_true = sigma_true.*Fdist_true.param.a.*(sigma_true-Fdist_true.param.a-1)/(tau_true.*Fdist_true.param.b).^2;
+    mean_w_rem_true = mean(w_rem_true);
+    
+    variables = {'varsigma1', 'varsigma2', 'varsigma3', 'mean_w_rem'};
+    namesvar = {'$\varsigma_1$', '$\varsigma_2$', '$\varsigma_3$', '$\overline{w}_{\ast}$'};
+    trueval = {varsigma1_true, varsigma2_true, varsigma3_true, mean_w_rem_true};
+    plot_trace(objmcmc.samples, objmcmc.settings, variables, namesvar, trueval, outpath, prefix, suffix);
+    plot_hist(objmcmc_noburn.samples, variables, namesvar, trueval, ind_features, [], outpath, prefix, suffix);
+else
+    logalpha2_true = log(alpha_true)+sigma_true*log(tau_true);
+    b2_true = tau_true*Fdist_true.param.b;
+    mean_w_rem_true = mean(w_rem_true);
+
+    variables = {'logalpha2', 'sigma', 'Fparam.a', 'Fparam.b2', 'mean_w_rem'};
+    namesvar = {'$\log \tilde\alpha$', '$\sigma$', '$a$', '$\tilde b$', '$\overline{w}_{\ast}$'};
+    trueval = {logalpha2_true, sigma_true, Fdist_true.param.a, b2_true, mean_w_rem_true};
+    plot_trace(objmcmc.samples, objmcmc.settings, variables, namesvar, trueval, outpath, prefix, suffix);
+    plot_hist(objmcmc_noburn.samples, variables, namesvar, trueval, ind_features, [], outpath, prefix, suffix);
+end
 
 %%
-
-% Plot the graph by sorting the nodes by max feature
-[~,indk] = max(w_true,[],2);
-[~,ind] = sort(indk, 'descend');
-figure
-spy(G(ind, ind))
-xlabel('Nodes')
-ylabel('Nodes')
-title('Sorted Adjacency Matrix')
+% Plot credible intervals for the weights
+plot_mean_w_ci(G, objmcmc.samples(1).mean_w, w_true, outpath, prefix, suffix)
 
 %%
 
 % Plot posterior predictive of degrees
-if istest
-    ndraws = 100;
-else
-    ndraws = 5000;
-end
-plot_degreepostpred(G, objmcmc, ndraws, 1e-6, outpath, prefix, suffix);
+plot_degreepostpred(G, objmcmc_noburn, ndraws, 1e-6, outpath, prefix, suffix);
 
-%%
-
-% Plot credible intervals for the weights
-[~, ind] = sort(sum(G, 2)+sum(G, 1)', 'descend');
-mean_w_true = mean(w_true,2);
-
-% High degree nodes
-figure('name','Credible intervals - high degree nodes'); hold on
-for i=1:min(nnodes(1), 50)
-    plot([i, i],quantile(objmcmc.samples(1).mean_w(ind(i), :, :),[.025,.975]), 'r','linewidth', 3);
-    hold on
-    plot(i, mean_w_true(ind(i)), 'xg', 'linewidth', 2)
-end
-xlim([0.1, min(nnodes(1), 50)+.5])
-box off
-ylabel('Mean sociability parameters', 'fontsize', 16)
-xlabel('Index of node (sorted by dec. degree)', 'fontsize', 16)
-legend('95% credible intervals', 'True value', 'location', 'northeast')
-legend boxoff
-[~, ind] = sort(sum(G, 2)+sum(G, 1)', 'descend');
-
-% Low degree nodes
-figure('name','Credible intervals - low degree nodes'); hold on
-for i=max(1,nnodes(1)-50+1):nnodes(1)
-    plot([i, i],...
-        quantile(log(objmcmc.samples(1).mean_w(ind(i), :, :)),[.025,.975]), 'r', ...
-        'linewidth', 3);
-    hold on
-    plot(i, log(mean_w_true(ind(i))), 'xg', 'linewidth', 2)
-end
-xlim([max(1,nnodes(1)-50+1)-.5, nnodes(1)+.5])
-ylim([-12, -4])
-box off
-ylabel('Log mean sociability parameters', 'fontsize', 16)
-xlabel('Index of node (sorted by dec. degree)', 'fontsize', 16)
-legend('95% credible intervals', 'True value', 'location', 'southeast')
-legend boxoff
 ##### SOURCE END #####
 --></body></html>

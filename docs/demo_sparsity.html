@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_sparsity</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-11-08"><meta name="DC.source" content="demo_sparsity.m"><style type="text/css">
+      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_sparsity</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-01"><meta name="DC.source" content="demo_sparsity.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_sparsity</h1><!--introduction--><p>This Matlab script shows empirically the sparsity properties of a range of graph models.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/misxenia/SNetOC">SNetOCC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2016a. Requires the Statistics toolbox.</p><p>Last Modified: 10/10/2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">General settings</a></li><li><a href="#2">Definition of the graph models</a></li><li><a href="#3">Sample graphs of various sizes</a></li><li><a href="#4">Some plots</a></li><li><a href="#7">Save workspace</a></li></ul></div><h2>General settings<a name="1"></a></h2><pre class="codeinput">clear
+  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_sparsity</h1><!--introduction--><p>This Matlab script shows empirically the sparsity properties of a range of graph models.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/OxCSML-BayesNP/SNetOC">SNetOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2017a. Requires the Statistics toolbox.</p><p>Last Modified: 01/2020</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">General settings</a></li><li><a href="#2">Definition of the graph models</a></li><li><a href="#3">Sample graphs of various sizes</a></li><li><a href="#4">Some plots</a></li><li><a href="#7">Save workspace</a></li></ul></div><h2 id="1">General settings</h2><pre class="codeinput">clear
 close <span class="string">all</span>
 
 <span class="comment">% Add paths</span>
@@ -85,7 +85,7 @@ outpath = fullfile(root, <span class="string">'results'</span>, <span class="str
 
 <span class="comment">% Set the seed</span>
 rng <span class="string">default</span>
-</pre><h2>Definition of the graph models<a name="2"></a></h2><pre class="codeinput">p = 2; alpha = 100; tau = 1;
+</pre><h2 id="2">Definition of the graph models</h2><pre class="codeinput">p = 2; alpha = 100; tau = 1;
 gamma = zeros(p,1);
 a = .2;
 b = 1/p;
@@ -130,7 +130,7 @@ optionrnd{imod} = 1e-4;
 edgebins = 2.^(0:1:12);
 sizebins = edgebins(2:end) - edgebins(1:end-1);
 sizebins(end+1) = 1;
-</pre><h2>Sample graphs of various sizes<a name="3"></a></h2><pre class="codeinput"><span class="keyword">for</span> k=1:numel(obj) <span class="comment">% For different models</span>
+</pre><h2 id="3">Sample graphs of various sizes</h2><pre class="codeinput"><span class="keyword">for</span> k=1:numel(obj) <span class="comment">% For different models</span>
     fprintf(<span class="string">'--- Model %d/%d: %s ---\n'</span>, k, numel(obj), obj{k}.name)
     <span class="keyword">for</span> i=1:numel(trial{k}) <span class="comment">% Varying number of nodes</span>
         <span class="keyword">if</span> rem(i, 10)==0
@@ -354,17 +354,19 @@ Trial 470/500
 Trial 480/500 
 Trial 490/500 
 Trial 500/500 
-</pre><h2>Some plots<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Properties of the plots</span>
+</pre><h2 id="4">Some plots</h2><pre class="codeinput"><span class="comment">% Properties of the plots</span>
 fontsize = 22;
 plotstyles = {<span class="string">'--+'</span>,<span class="string">':s'</span>,<span class="string">':d'</span>,<span class="string">':o'</span>};
 colors = lines;
 <span class="keyword">for</span> k=1:numel(obj)
-    leg{k} = sprintf(<span class="string">'\\sigma = %g'</span>, obj{k}.param.sigma);
+    leg{k} = sprintf(<span class="string">'$\\sigma = %g$'</span>, obj{k}.param.sigma);
 <span class="keyword">end</span>
 set(0,<span class="string">'DefaultAxesFontSize'</span>, 16)
 set(0,<span class="string">'DefaultTextFontSize'</span>, fontsize)
 set(0,<span class="string">'DefaultLineLineWidth'</span>, 2)
 set(0,<span class="string">'DefaultLineMarkerSize'</span>, 8)
+set(0, <span class="string">'defaultTextInterpreter'</span>, <span class="string">'latex'</span>);
+set(0, <span class="string">'defaultAxesTickLabelInterpreter'</span>, <span class="string">'latex'</span>);
 close
 
 <span class="comment">% Degree distribution loglog plot</span>
@@ -379,7 +381,7 @@ axis <span class="string">tight</span>
 <span class="comment">% ylim([10, 20000])</span>
 xlabel(<span class="string">'Degree'</span>, <span class="string">'fontsize'</span>, fontsize)
 ylabel(<span class="string">'Distribution'</span>, <span class="string">'fontsize'</span>, fontsize)
-legend(leg, <span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'southwest'</span>)
+legend(leg, <span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'southwest'</span>, <span class="string">'interpreter'</span>, <span class="string">'latex'</span>)
 legend <span class="string">boxoff</span>
 box <span class="string">off</span>
 <span class="keyword">if</span> saveplots
@@ -401,7 +403,7 @@ xlim([25, 3000])
 <span class="comment">% ylim([10, 20000])</span>
 xlabel(<span class="string">'Number of nodes'</span>, <span class="string">'fontsize'</span>, fontsize)
 ylabel(<span class="string">'Number of edges'</span>, <span class="string">'fontsize'</span>, fontsize)
-legend(leg, <span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+legend(leg, <span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'northwest'</span>, <span class="string">'interpreter'</span>, <span class="string">'latex'</span>)
 legend <span class="string">boxoff</span>
 box <span class="string">off</span>
 <span class="keyword">if</span> saveplots
@@ -419,8 +421,8 @@ hold <span class="string">on</span>
 axis <span class="string">tight</span>
 xlim([10, 2000])
 xlabel(<span class="string">'Number of nodes'</span>, <span class="string">'fontsize'</span>, fontsize)
-ylabel(<span class="string">'Nb of edges / (Nb of nodes)^2'</span>, <span class="string">'fontsize'</span>, fontsize)
-legend(leg,<span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'southwest'</span>)
+ylabel(<span class="string">'$Nb of edges / (Nb of nodes)^2$'</span>, <span class="string">'fontsize'</span>, fontsize)
+legend(leg,<span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'southwest'</span>, <span class="string">'interpreter'</span>, <span class="string">'latex'</span>)
 legend <span class="string">boxoff</span>
 box <span class="string">off</span>
 <span class="keyword">if</span> saveplots
@@ -438,24 +440,28 @@ xlim([10, 2000])
 <span class="comment">% ylim([1, 2000])</span>
 xlabel(<span class="string">'Number of nodes'</span>, <span class="string">'fontsize'</span>, fontsize);
 ylabel(<span class="string">'Number of nodes of degree one'</span>, <span class="string">'fontsize'</span>, fontsize);
-legend(leg,<span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'northwest'</span>);
+legend(leg,<span class="string">'fontsize'</span>, fontsize, <span class="string">'location'</span>, <span class="string">'northwest'</span>, <span class="string">'interpreter'</span>, <span class="string">'latex'</span>);
 legend(<span class="string">'boxoff'</span>);
 legend <span class="string">boxoff</span>
 box <span class="string">off</span>
 <span class="keyword">if</span> saveplots
     savefigs(gcf, <span class="string">'degreeonevsnodes'</span>, outpath);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="demo_sparsity_04.png" alt=""> <h2>Save workspace<a name="7"></a></h2><pre class="codeinput"><span class="keyword">if</span> saveworkspace
+</pre><img vspace="5" hspace="5" src="demo_sparsity_04.png" alt=""> <h2 id="7">Save workspace</h2><pre class="codeinput"><span class="keyword">if</span> saveworkspace
     save(fullfile(outpath, <span class="string">'workspace'</span>));
 <span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+
+<span class="comment">% reset default properties</span>
+set(0,<span class="string">'defaultLineLineWidth'</span>, 0.5)
+set(0,<span class="string">'defaultLineMarkerSize'</span>, 6)
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Sparse Networks with Overlapping Communities (SNetOC) package: demo_sparsity
 %
 % This Matlab script shows empirically the sparsity properties of a range of graph models.
 %
 % For downloading the package and information on installation, visit the
-% <https://github.com/misxenia/SNetOC SNetOCC webpage>.
+% <https://github.com/OxCSML-BayesNP/SNetOC SNetOC webpage>.
 % 
 % Reference: 
 %
@@ -467,9 +473,9 @@ box <span class="string">off</span>
 % * <http://csml.stats.ox.ac.uk/people/miscouridou/ X. Miscouridou>, University of Oxford
 % * <http://www.stats.ox.ac.uk/~caron/ F. Caron>, University of Oxford
 % 
-% Tested on Matlab R2016a. Requires the Statistics toolbox.
+% Tested on Matlab R2017a. Requires the Statistics toolbox.
 %
-% Last Modified: 10/10/2017
+% Last Modified: 01/2020
 %%
 
 %% General settings
@@ -576,12 +582,14 @@ fontsize = 22;
 plotstyles = {'REPLACE_WITH_DASH_DASH+',':s',':d',':o'};
 colors = lines;
 for k=1:numel(obj)
-    leg{k} = sprintf('\\sigma = %g', obj{k}.param.sigma);
+    leg{k} = sprintf('$\\sigma = %g$', obj{k}.param.sigma);
 end
 set(0,'DefaultAxesFontSize', 16)
 set(0,'DefaultTextFontSize', fontsize)
 set(0,'DefaultLineLineWidth', 2)
 set(0,'DefaultLineMarkerSize', 8)
+set(0, 'defaultTextInterpreter', 'latex');
+set(0, 'defaultAxesTickLabelInterpreter', 'latex');
 close 
 
 % Degree distribution loglog plot
@@ -596,7 +604,7 @@ axis tight
 % ylim([10, 20000])
 xlabel('Degree', 'fontsize', fontsize)
 ylabel('Distribution', 'fontsize', fontsize)
-legend(leg, 'fontsize', fontsize, 'location', 'southwest')
+legend(leg, 'fontsize', fontsize, 'location', 'southwest', 'interpreter', 'latex')
 legend boxoff
 box off
 if saveplots
@@ -618,7 +626,7 @@ xlim([25, 3000])
 % ylim([10, 20000])
 xlabel('Number of nodes', 'fontsize', fontsize)
 ylabel('Number of edges', 'fontsize', fontsize)
-legend(leg, 'fontsize', fontsize, 'location', 'northwest')
+legend(leg, 'fontsize', fontsize, 'location', 'northwest', 'interpreter', 'latex')
 legend boxoff
 box off
 if saveplots
@@ -640,8 +648,8 @@ end
 axis tight
 xlim([10, 2000])
 xlabel('Number of nodes', 'fontsize', fontsize)
-ylabel('Nb of edges / (Nb of nodes)^2', 'fontsize', fontsize)
-legend(leg,'fontsize', fontsize, 'location', 'southwest')
+ylabel('$Nb of edges / (Nb of nodes)^2$', 'fontsize', fontsize)
+legend(leg,'fontsize', fontsize, 'location', 'southwest', 'interpreter', 'latex')
 legend boxoff
 box off
 if saveplots
@@ -663,7 +671,7 @@ xlim([10, 2000])
 % ylim([1, 2000])
 xlabel('Number of nodes', 'fontsize', fontsize);
 ylabel('Number of nodes of degree one', 'fontsize', fontsize);
-legend(leg,'fontsize', fontsize, 'location', 'northwest');
+legend(leg,'fontsize', fontsize, 'location', 'northwest', 'interpreter', 'latex');
 legend('boxoff');
 legend boxoff
 box off
@@ -676,6 +684,10 @@ end
 if saveworkspace
     save(fullfile(outpath, 'workspace'));
 end
+
+% reset default properties
+set(0,'defaultLineLineWidth', 0.5)
+set(0,'defaultLineMarkerSize', 6)
 
 ##### SOURCE END #####
 --></body></html>

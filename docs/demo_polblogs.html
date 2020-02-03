@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_polblogs</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-11-08"><meta name="DC.source" content="demo_polblogs.m"><style type="text/css">
+      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_polblogs</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-01"><meta name="DC.source" content="demo_polblogs.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_polblogs</h1><!--introduction--><p>This Matlab script performs posterior inference on a network of political blogs to find latent overlapping communities, using a Bayesian nonparametric approach.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/misxenia/SNetOC">SNetOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2016a. Requires the Statistics toolbox.</p><p>Last Modified: 10/2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">General settings</a></li><li><a href="#3">Load network of political blogs</a></li><li><a href="#6">Posterior Inference using Markov chain Monte Carlo and point estimation</a></li><li><a href="#10">Plots</a></li></ul></div><h2>General settings<a name="1"></a></h2><pre class="codeinput">clear
+  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_polblogs</h1><!--introduction--><p>This Matlab script performs posterior inference on a network of political blogs to find latent overlapping communities, using a Bayesian nonparametric approach.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/OxCSML-BayesNP/SNetOC">SNetOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2017a. Requires the Statistics toolbox.</p><p>Last Modified: 01/2020</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">General settings</a></li><li><a href="#3">Load network of political blogs</a></li><li><a href="#6">Posterior Inference using Markov chain Monte Carlo and point estimation</a></li><li><a href="#11">discard burnin</a></li><li><a href="#12">Point estimation of the model parameters</a></li><li><a href="#13">Plots</a></li></ul></div><h2 id="1">General settings</h2><pre class="codeinput">clear
 close <span class="string">all</span>
 tstart = clock; <span class="comment">% Starting time</span>
 
@@ -89,7 +89,7 @@ set(0, <span class="string">'DefaultAxesFontSize'</span>, 14)
 
 <span class="comment">% Set the seed</span>
 rng <span class="string">default</span>
-</pre><h2>Load network of political blogs<a name="3"></a></h2><p>Data can be downloaded from <a href="https://www.cise.ufl.edu/research/sparse/mat/Newman/polblogs.mat">here</a>.</p><pre class="codeinput">load <span class="string">./data/polblogs/polblogs.mat</span>
+</pre><h2 id="3">Load network of political blogs</h2><p>Data can be downloaded from <a href="https://www.cise.ufl.edu/research/sparse/mat/Newman/polblogs.mat">here</a>.</p><pre class="codeinput">load <span class="string">./data/polblogs/polblogs.mat</span>
 
 titlenetwork = <span class="string">'Political blogosphere Feb. 2005'</span>;
 name = <span class="string">'polblogs'</span>;
@@ -101,6 +101,7 @@ G = Problem.A | Problem.A'; <span class="comment">% make undirected graph</span>
 G = logical(G-diag(diag(G))); <span class="comment">% remove self edges (#3)</span>
 
 <span class="comment">% Collect metadata</span>
+clear <span class="string">meta</span>
 meta.name = cellstr(Problem.aux.nodename);
 meta.source = cellstr(Problem.aux.nodesource);
 meta.isright = logical(Problem.aux.nodevalue);
@@ -120,7 +121,7 @@ G = G(ind, ind);
 <span class="keyword">end</span>
 
 <span class="comment">% Plot adjacency matrix (sorted)</span>
-figure(<span class="string">'name'</span>, <span class="string">'Adjacency matrix (sorted by ground truth political leaning)'</span>)
+figure(<span class="string">'name'</span>, <span class="string">'Adjacency matrix (sorted by ground truth political leaning)'</span>);
 spy(G);
 xlabel(labels{2})
 ylabel(labels{1})
@@ -132,15 +133,15 @@ G = G(ind, ind);
 <span class="keyword">end</span>
 
 <span class="comment">% Plot adjacency matrix (unsorted)</span>
-figure(<span class="string">'name'</span>, <span class="string">'Adjacency matrix (unsorted)'</span>)
+figure(<span class="string">'name'</span>, <span class="string">'Adjacency matrix (unsorted)'</span>);
 spy(G);
 xlabel(labels{2})
 ylabel(labels{1})
 </pre><img vspace="5" hspace="5" src="demo_polblogs_02.png" alt=""> <pre class="codeinput"><span class="comment">% Plot degree distribution</span>
-figure(<span class="string">'name'</span>, <span class="string">'Empirical degree distribution'</span>)
+figure(<span class="string">'name'</span>, <span class="string">'Empirical degree distribution'</span>);
 hdeg = plot_degree(G);
 set(hdeg, <span class="string">'markersize'</span>, 10, <span class="string">'marker'</span>, <span class="string">'o'</span>,<span class="string">'markeredgecolor'</span>, <span class="string">'none'</span>, <span class="string">'markerfacecolor'</span>, [1, .75, .75]);
-</pre><img vspace="5" hspace="5" src="demo_polblogs_03.png" alt=""> <h2>Posterior Inference using Markov chain Monte Carlo and point estimation<a name="6"></a></h2><p>Users needs to start the parallel pool by using the command <b>parpool</b> to run multiple chains in parallel.</p><pre class="codeinput"><span class="comment">% Define the parameters of the prior</span>
+</pre><img vspace="5" hspace="5" src="demo_polblogs_03.png" alt=""> <h2 id="6">Posterior Inference using Markov chain Monte Carlo and point estimation</h2><p>Users needs to start the parallel pool by using the command <b>parpool</b> to run multiple chains in parallel.</p><pre class="codeinput"><span class="comment">% Define the parameters of the prior</span>
 p = 2; <span class="comment">% Number of commmunities</span>
 objprior =  graphmodel(<span class="string">'CGGP'</span>, p); <span class="comment">% CGGP graph model with p communities</span>
 
@@ -150,18 +151,19 @@ nchains = 3;
     niterinit = 1000;
     niter = 10000;
     nsamples = 100;
+    ndraws = 100;
 <span class="keyword">else</span>
     niterinit = 10000;
-    niter = 200000;
-    nsamples = 500;
+    niter = 2e6;
+    nsamples = 1000;
+    ndraws = 500;
 <span class="keyword">end</span>
 nburn = floor(niter/2);
-
 thin = ceil((niter-nburn)/nsamples);
 verbose = true;
 
 <span class="comment">% Create the graphMCMC object</span>
-objmcmc = graphmcmc(objprior, niter, nburn, thin, nchains);
+objmcmc = graphmcmc(objprior, niter, 0, thin, nchains);
 
 <span class="comment">% Run initialisation</span>
 init = graphinit(objmcmc, G, niterinit);
@@ -173,58 +175,84 @@ End initialisation
 </pre><pre class="codeinput"><span class="comment">% Run MCMC sampler</span>
 objmcmc = graphmcmcsamples(objmcmc, G, verbose, init);
 </pre><pre class="codeoutput">-----------------------------------
-Start MCMC for CGGP graphs
-Nb of nodes: 1224 - Nb of edges: 16715 (0 missing)
+Start MCMC for undirected CGGP graphs
+Nb of nodes: 1224x1224 - Nb of edges: 16715 (0 missing)
 Nb of chains: 3 - Nb of iterations: 10000
-Nb of parallel workers: 1
-Estimated computation time: 0 hour(s) 2 minute(s)
-Estimated end of computation: 08-Nov-2017 18:03:33 
+Estimated computation time: 0 hour(s) 3 minute(s)
+Estimated end of computation: 01-Feb-2020 17:43:48 
 -----------------------------------
  Markov chain 1/3 
 -----------------------------------
-i=2000 alp=853.49 sig=-0.318 tau=2.23 a=0.22 0.20 b=0.41 0.51 w*=0.52 0.40 b2=0.91 1.13 alp2=661.59 rhmc=0.68 rhyp=0.32 eps=0.028 rwsd=0.054
-i=4000 alp=1625.62 sig=-0.482 tau=3.37 a=0.20 0.16 b=0.40 0.31 w*=0.46 0.50 b2=1.35 1.04 alp2=905.44 rhmc=0.72 rhyp=0.23 eps=0.022 rwsd=0.054
-i=6000 alp=1787.89 sig=-0.462 tau=4.23 a=0.17 0.14 b=0.27 0.23 w*=0.51 0.52 b2=1.14 0.99 alp2=917.85 rhmc=0.83 rhyp=0.24 eps=0.022 rwsd=0.054
-i=8000 alp=1899.11 sig=-0.474 tau=4.23 a=0.16 0.14 b=0.27 0.26 w*=0.56 0.43 b2=1.14 1.11 alp2=958.50 rhmc=0.83 rhyp=0.26 eps=0.022 rwsd=0.054
-i=10000 alp=1988.12 sig=-0.496 tau=3.79 a=0.15 0.13 b=0.30 0.32 w*=0.47 0.36 b2=1.13 1.22 alp2=1026.23 rhmc=0.82 rhyp=0.23 eps=0.022 rwsd=0.054
+i=2000 alp=3249.79 sig=-1.140 tau=2.07 a=0.26 0.21 b=1.43 1.03 w*=0.19 0.19 b2=2.96 2.13 alp2=1419.80 rhmc=0.78 rhyp=0.58 eps=0.026 rwsd=0.02
+i=4000 alp=4982.05 sig=-1.448 tau=1.99 a=0.22 0.20 b=1.81 1.55 w*=0.28 0.26 b2=3.62 3.09 alp2=1834.40 rhmc=0.76 rhyp=0.61 eps=0.026 rwsd=0.02
+i=6000 alp=4427.75 sig=-1.551 tau=1.62 a=0.20 0.17 b=1.99 1.92 w*=0.25 0.21 b2=3.21 3.10 alp2=2098.72 rhmc=0.77 rhyp=0.62 eps=0.026 rwsd=0.02
+i=8000 alp=4211.75 sig=-1.656 tau=1.43 a=0.18 0.16 b=2.46 2.20 w*=0.29 0.19 b2=3.51 3.14 alp2=2336.68 rhmc=0.77 rhyp=0.62 eps=0.026 rwsd=0.02
+i=10000 alp=3414.97 sig=-2.324 tau=1.02 a=0.19 0.15 b=5.43 5.08 w*=0.29 0.28 b2=5.52 5.16 alp2=3288.22 rhmc=0.77 rhyp=0.64 eps=0.026 rwsd=0.02
 -----------------------------------
  Markov chain 2/3 
 -----------------------------------
-i=2000 alp=704.00 sig=-0.235 tau=2.52 a=0.21 0.21 b=0.44 0.32 w*=0.50 0.55 b2=1.11 0.80 alp2=566.75 rhmc=0.67 rhyp=0.32 eps=0.024 rwsd=0.054
-i=4000 alp=1259.23 sig=-0.379 tau=3.55 a=0.16 0.17 b=0.28 0.25 w*=0.41 0.56 b2=1.00 0.87 alp2=779.78 rhmc=0.77 rhyp=0.23 eps=0.022 rwsd=0.052
-i=6000 alp=1958.77 sig=-0.467 tau=4.44 a=0.14 0.18 b=0.21 0.28 w*=0.43 0.47 b2=0.92 1.23 alp2=976.18 rhmc=0.82 rhyp=0.25 eps=0.022 rwsd=0.052
-i=8000 alp=2059.08 sig=-0.505 tau=4.33 a=0.15 0.17 b=0.27 0.31 w*=0.46 0.42 b2=1.16 1.32 alp2=983.15 rhmc=0.82 rhyp=0.25 eps=0.022 rwsd=0.052
-i=10000 alp=1942.87 sig=-0.493 tau=3.97 a=0.15 0.17 b=0.31 0.23 w*=0.34 0.54 b2=1.21 0.90 alp2=984.37 rhmc=0.81 rhyp=0.26 eps=0.022 rwsd=0.052
+i=2000 alp=3246.03 sig=-1.072 tau=2.31 a=0.24 0.26 b=1.12 1.10 w*=0.18 0.25 b2=2.60 2.55 alp2=1323.28 rhmc=0.77 rhyp=0.56 eps=0.026 rwsd=0.02
+i=4000 alp=4493.17 sig=-1.340 tau=2.00 a=0.19 0.23 b=1.19 1.61 w*=0.19 0.24 b2=2.38 3.23 alp2=1768.96 rhmc=0.76 rhyp=0.62 eps=0.026 rwsd=0.02
+i=6000 alp=4308.25 sig=-1.421 tau=1.85 a=0.18 0.21 b=1.72 1.67 w*=0.22 0.32 b2=3.18 3.10 alp2=1796.74 rhmc=0.77 rhyp=0.62 eps=0.026 rwsd=0.02
+i=8000 alp=4349.56 sig=-1.617 tau=1.48 a=0.16 0.21 b=2.55 2.63 w*=0.24 0.33 b2=3.78 3.89 alp2=2301.32 rhmc=0.76 rhyp=0.62 eps=0.026 rwsd=0.02
+i=10000 alp=3910.44 sig=-2.229 tau=1.09 a=0.16 0.18 b=4.76 4.35 w*=0.35 0.32 b2=5.19 4.74 alp2=3225.01 rhmc=0.77 rhyp=0.63 eps=0.026 rwsd=0.02
 -----------------------------------
  Markov chain 3/3 
 -----------------------------------
-i=2000 alp=444.90 sig=-0.129 tau=1.93 a=0.22 0.23 b=0.19 0.32 w*=0.49 0.45 b2=0.37 0.61 alp2=408.74 rhmc=0.68 rhyp=0.32 eps=0.038 rwsd=0.052
-i=4000 alp=1226.02 sig=-0.358 tau=4.20 a=0.19 0.17 b=0.20 0.21 w*=0.46 0.40 b2=0.86 0.89 alp2=733.18 rhmc=0.70 rhyp=0.24 eps=0.021 rwsd=0.053
-i=6000 alp=1367.94 sig=-0.376 tau=4.33 a=0.17 0.15 b=0.20 0.22 w*=0.52 0.39 b2=0.88 0.94 alp2=788.40 rhmc=0.84 rhyp=0.24 eps=0.021 rwsd=0.053
-i=8000 alp=2250.42 sig=-0.499 tau=5.26 a=0.18 0.14 b=0.24 0.20 w*=0.48 0.38 b2=1.26 1.07 alp2=981.84 rhmc=0.84 rhyp=0.25 eps=0.021 rwsd=0.053
-i=10000 alp=2427.51 sig=-0.534 tau=5.11 a=0.16 0.15 b=0.20 0.25 w*=0.47 0.45 b2=1.04 1.26 alp2=1015.77 rhmc=0.84 rhyp=0.23 eps=0.021 rwsd=0.053
+i=2000 alp=3738.08 sig=-1.111 tau=2.46 a=0.26 0.22 b=1.29 1.06 w*=0.19 0.19 b2=3.17 2.61 alp2=1372.81 rhmc=0.78 rhyp=0.57 eps=0.026 rwsd=0.02
+i=4000 alp=5398.35 sig=-1.522 tau=1.97 a=0.22 0.19 b=1.88 2.02 w*=0.34 0.23 b2=3.70 3.98 alp2=1929.61 rhmc=0.76 rhyp=0.59 eps=0.026 rwsd=0.02
+i=6000 alp=4418.70 sig=-1.813 tau=1.39 a=0.20 0.17 b=3.14 2.35 w*=0.23 0.20 b2=4.36 3.26 alp2=2434.37 rhmc=0.77 rhyp=0.61 eps=0.026 rwsd=0.02
+i=8000 alp=3651.00 sig=-2.261 tau=1.07 a=0.18 0.16 b=5.63 4.46 w*=0.20 0.26 b2=6.01 4.76 alp2=3152.50 rhmc=0.78 rhyp=0.63 eps=0.026 rwsd=0.02
+i=10000 alp=2840.48 sig=-2.933 tau=0.87 a=0.16 0.15 b=7.24 8.36 w*=0.34 0.25 b2=6.31 7.29 alp2=4245.54 rhmc=0.76 rhyp=0.63 eps=0.026 rwsd=0.02
 -----------------------------------
 End MCMC
-Computation time: 0 hour(s) 2 minute(s)
+Computation time: 0 hour(s) 3 minute(s)
 -----------------------------------
 </pre><pre class="codeinput"><span class="comment">% Print summary in text file</span>
 print_summary([<span class="string">'summary_'</span> num2str(p) <span class="string">'f.txt'</span>], titlenetwork, G, niter, nburn, nchains, thin, p, outpath, tstart)
-</pre><pre class="codeinput"><span class="comment">% Point estimation of the model parameters</span>
-[estimates, C_st] = graphest(objmcmc);
 
 <span class="comment">% Save workspace</span>
-save(fullfile(outpath, [<span class="string">'workspace_'</span> num2str(p) <span class="string">'f.mat'</span>]))
+save(fullfile(outpath, [<span class="string">'workspace_'</span> num2str(p) <span class="string">'f.mat'</span>]), <span class="string">'-v7.3'</span>)
+</pre><pre class="codeinput"><span class="comment">% Log posterior approximation</span>
+[lp_nonlat, lp_lat, ll_nonlat, ll_lat] = logpost_approx(objmcmc, G);
+</pre><pre class="codeinput"><span class="comment">% Compute identifiable parameters</span>
+<span class="keyword">for</span> ch = 1:size(objmcmc.samples, 2)
+    S = objmcmc.samples(1,ch);
+    objmcmc.samples(1,ch).varsigma1 = -S.alpha .* S.tau.^S.sigma ./ S.sigma;
+    a_sigma = S.Fparam.a.*S.sigma;
+    objmcmc.samples(1,ch).varsigma2 = -a_sigma./S.Fparam.b2;
+    objmcmc.samples(1,ch).varsigma3 = a_sigma.*(S.sigma-S.Fparam.a-1)./(S.Fparam.b2.^2);
+<span class="keyword">end</span>
+</pre><h2 id="11">discard burnin</h2><pre class="codeinput">objmcmc_noburn = objmcmc;
+objmcmc_noburn.samples = discard(objmcmc.samples, floor(nburn/objmcmc.settings.thin));
+objmcmc_noburn.settings.nburn = nburn;
+</pre><h2 id="12">Point estimation of the model parameters</h2><pre class="codeinput">[estimates, C_st] = graphest(objmcmc_noburn);
 </pre><pre class="codeoutput">-----------------------------------
 Start parameters estimation for CGGP graphs: 300 samples
-Estimated end of computation: 08-Nov-2017 18:03:38 (0.0 hours)
+Estimated end of computation: 01-Feb-2020 17:44:39 (0.0 hours)
 |---------------------------------|
 |*********************************|
 End parameters estimation for CGGP graphs
 Computation time: 0.0 hours
 -----------------------------------
-</pre><h2>Plots<a name="10"></a></h2><pre class="codeinput">prefix = sprintf(<span class="string">'%s_%df_'</span>, name, p);
+</pre><h2 id="13">Plots</h2><pre class="codeinput">prefix = sprintf(<span class="string">'%s_%df_'</span>, name, p);
 suffix = <span class="string">''</span>;
-</pre><pre class="codeinput"><span class="comment">% Identify each feature to left/right wing using ground truth</span>
+</pre><pre class="codeinput"><span class="comment">% Plot Log posterior approximation</span>
+iter = (1:size(lp_nonlat,1))*thin;
+plot_logpost(lp_nonlat, iter, [], <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_nonlat'</span>);
+plot_logpost(lp_lat, iter, [], <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_lat'</span>);
+
+<span class="comment">% Plot log-posterior autocorr</span>
+lp_nonlat_noburn = lp_nonlat(floor(nburn/niter*size(lp_nonlat, 1)):end, :);
+lp_lat_noburn = lp_lat(floor(nburn/niter*size(lp_lat, 1)):end, :);
+plot_autocorr_logpost(lp_nonlat_noburn, thin, <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_nonlat'</span>);
+plot_autocorr_logpost(lp_lat_noburn, thin, <span class="string">'Log-posterior'</span>, outpath, prefix, <span class="string">'_lat'</span>);
+
+<span class="comment">% Plot cost</span>
+<span class="keyword">if</span> ~isempty(C_st)
+    plot_cost(C_st, outpath, prefix, suffix);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="demo_polblogs_04.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_05.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_06.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_07.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_08.png" alt=""> <pre class="codeinput"><span class="comment">% Identify each feature to left/right wing using ground truth</span>
 <span class="comment">% (This step would normally require a human interpretation of the features)</span>
 [~, ind_features] = sort(median(estimates.w(meta.isright,:), 1)./median(estimates.w, 1));
 featnames = {<span class="string">'Liberal'</span>, <span class="string">'Conservative'</span>};
@@ -238,35 +266,31 @@ featnames = {<span class="string">'Liberal'</span>, <span class="string">'Conser
 Confusion matrix (counts)
 -------------------------
 Group        : Feat 1 Feat 2 | Total
-Left         :    530     58 |   588
+Left         :    533     55 |   588
 Right        :     22    614 |   636
-Total        :    552    672 |  1224
+Total        :    555    669 |  1224
 -------------------------
 Confusion matrix (%)
 -------------------------
 Group        : Feat 1 Feat 2 | Total
-Left         :  43.30   4.74 | 48.04
+Left         :  43.55   4.49 | 48.04
 Right        :   1.80  50.16 | 51.96
-Total        :  45.10  54.90 |100.00
+Total        :  45.34  54.66 |100.00
 -------------------------
 Group assignments of features
 -------------------------
 Feat 1: Left
 Feat 2: Right
 -------------------------
-Accuracy = 93.46
-Error = 6.54
+Accuracy = 93.71
+Error = 6.29
 ==========================
 </pre><pre class="codeinput"><span class="comment">% Plot traces and histograms</span>
-variables = {<span class="string">'logalpha'</span>, <span class="string">'sigma'</span>, <span class="string">'tau'</span>, <span class="string">'Fparam.a'</span>, <span class="string">'Fparam.b'</span>, <span class="string">'mean_w_rem'</span>};
-namesvar = {<span class="string">'$\log \alpha$'</span>, <span class="string">'$\sigma$'</span>, <span class="string">'$\tau$'</span>, <span class="string">'$a$'</span>, <span class="string">'$b$'</span>, <span class="string">'$\overline{w}_{\ast}$'</span>};
+variables = {<span class="string">'varsigma1'</span>, <span class="string">'varsigma2'</span>, <span class="string">'varsigma3'</span>, <span class="string">'mean_w_rem'</span>};
+namesvar = {<span class="string">'$\varsigma_1$'</span>, <span class="string">'$\varsigma_2$'</span>, <span class="string">'$\varsigma_3$'</span>, <span class="string">'$\overline{w}_{\ast}$'</span>};
 plot_trace(objmcmc.samples, objmcmc.settings, variables, namesvar, [], outpath, prefix, suffix);
-plot_hist(objmcmc.samples, variables, namesvar, [], ind_features, [], outpath, prefix, suffix);
-</pre><img vspace="5" hspace="5" src="demo_polblogs_04.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_05.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_06.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_07.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_08.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_09.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_10.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_11.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_12.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_13.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_14.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_15.png" alt=""> <pre class="codeinput"><span class="comment">% Plot cost</span>
-<span class="keyword">if</span> ~isempty(C_st)
-    plot_cost(C_st, outpath, prefix, suffix);
-<span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="demo_polblogs_16.png" alt=""> <pre class="codeinput"><span class="comment">% Plot the graph by sorting the nodes by max feature to see block structure</span>
+plot_hist(objmcmc_noburn.samples, variables, namesvar, [], ind_features, [], outpath, prefix, suffix);
+</pre><img vspace="5" hspace="5" src="demo_polblogs_09.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_10.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_11.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_12.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_13.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_14.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_15.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_16.png" alt=""> <pre class="codeinput"><span class="comment">% Plot the graph by sorting the nodes by max feature to see block structure</span>
 plot_sortedgraph(G, nodefeat, nodefeat, ind_features, labels, outpath, prefix, suffix, {<span class="string">'png'</span>});
 </pre><img vspace="5" hspace="5" src="demo_polblogs_17.png" alt=""> <img vspace="5" hspace="5" src="demo_polblogs_18.png" alt=""> <pre class="codeinput"><span class="comment">% Show the proportion in each features for a few nodes</span>
 <span class="keyword">if</span> p==2
@@ -342,22 +366,22 @@ Nodes with highest weights in each feature
 #274, talkingpointsmemo.com (L). 
 #218, washingtonmonthly.com (L). 
 #171, liberaloasis.com (L). 
-#147, digbysblog.blogspot.com (L). 
-#170, juancole.com (L). 
-#149, newleftblogs.blogspot.com (L). 
 #137, politicalstrategy.org (L). 
+#170, juancole.com (L). 
 #144, pandagon.net (L). 
+#149, newleftblogs.blogspot.com (L). 
+#147, digbysblog.blogspot.com (L). 
 &amp; %--- FEATURE 2 ---
 #306, instapundit.com (R). 
 #301, blogsforbush.com (R). 
-#211, michellemalkin.com (R). 
-#223, powerlineblog.com (R). 
+#243, drudgereport.com (R). 
 #182, hughhewitt.com (R). 
 #196, littlegreenfootballs.com/weblog (R). 
-#243, drudgereport.com (R). 
-#179, wizbangblog.com (R). 
-#170, lashawnbarber.com (R). 
+#223, powerlineblog.com (R). 
+#211, michellemalkin.com (R). 
 #199, truthlaidbear.com (R). 
+#170, lashawnbarber.com (R). 
+#179, wizbangblog.com (R). 
 -----------------------------------
 </pre><pre class="codeinput"><span class="comment">% Correlation between the features</span>
 figure(<span class="string">'name'</span>, <span class="string">'Correlation between features'</span>);
@@ -369,15 +393,15 @@ xlabel(<span class="string">'Feature'</span>)
 ylabel(<span class="string">'Feature'</span>)
 title(<span class="string">'Correlation between features'</span>)
 </pre><img vspace="5" hspace="5" src="demo_polblogs_23.png" alt=""> <pre class="codeinput"><span class="comment">% Plot posterior predictive of degree distribution</span>
-plot_degreepostpred(G, objmcmc, nsamples, 1e-6, outpath, prefix, suffix);
+plot_degreepostpred(G, objmcmc_noburn, ndraws, 1e-6, outpath, prefix, suffix);
 </pre><pre class="codeoutput">-----------------------------------
 Start degree posterior predictive estimation: 100 draws
-Estimated end of computation: 08-Nov-2017 18:04:16 (0.0 hours)
+Estimated end of computation: 01-Feb-2020 17:46:06 (0.0 hours)
 |---------------------------------|
 |*********************************|
 End degree posterior predictive (0.0 hours)
 -----------------------------------
-</pre><img vspace="5" hspace="5" src="demo_polblogs_24.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="demo_polblogs_24.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Sparse Networks with Overlapping Communities (SNetOC) package: demo_polblogs
 %
@@ -386,7 +410,7 @@ End degree posterior predictive (0.0 hours)
 % nonparametric approach.
 %
 % For downloading the package and information on installation, visit the
-% <https://github.com/misxenia/SNetOC SNetOC webpage>.
+% <https://github.com/OxCSML-BayesNP/SNetOC SNetOC webpage>.
 % 
 % Reference: 
 %
@@ -398,9 +422,9 @@ End degree posterior predictive (0.0 hours)
 % * <http://csml.stats.ox.ac.uk/people/miscouridou/ X. Miscouridou>, University of Oxford
 % * <http://www.stats.ox.ac.uk/~caron/ F. Caron>, University of Oxford
 % 
-% Tested on Matlab R2016a. Requires the Statistics toolbox.
+% Tested on Matlab R2017a. Requires the Statistics toolbox.
 %
-% Last Modified: 10/2017
+% Last Modified: 01/2020
 %%
 
 %% General settings
@@ -453,6 +477,7 @@ G = Problem.A | Problem.A'; % make undirected graph
 G = logical(G-diag(diag(G))); % remove self edges (#3)
 
 % Collect metadata
+clear meta
 meta.name = cellstr(Problem.aux.nodename);
 meta.source = cellstr(Problem.aux.nodesource);
 meta.isright = logical(Problem.aux.nodevalue);
@@ -472,7 +497,7 @@ for i=1:length(fn)
 end
 
 % Plot adjacency matrix (sorted)
-figure('name', 'Adjacency matrix (sorted by ground truth political leaning)')
+figure('name', 'Adjacency matrix (sorted by ground truth political leaning)');
 spy(G);
 xlabel(labels{2})
 ylabel(labels{1})
@@ -487,7 +512,7 @@ for i=1:length(fn)
 end
 
 % Plot adjacency matrix (unsorted)
-figure('name', 'Adjacency matrix (unsorted)')
+figure('name', 'Adjacency matrix (unsorted)');
 spy(G);
 xlabel(labels{2})
 ylabel(labels{1})
@@ -495,7 +520,7 @@ ylabel(labels{1})
 %%
 
 % Plot degree distribution
-figure('name', 'Empirical degree distribution')
+figure('name', 'Empirical degree distribution');
 hdeg = plot_degree(G);
 set(hdeg, 'markersize', 10, 'marker', 'o','markeredgecolor', 'none', 'markerfacecolor', [1, .75, .75]);
 
@@ -511,19 +536,20 @@ nchains = 3;
 if istest
     niterinit = 1000;
     niter = 10000;
-    nsamples = 100; 
+    nsamples = 100;
+    ndraws = 100; 
 else
     niterinit = 10000;
-    niter = 200000;
-    nsamples = 500; 
+    niter = 2e6;
+    nsamples = 1000;
+    ndraws = 500;
 end   
 nburn = floor(niter/2);
-
 thin = ceil((niter-nburn)/nsamples); 
 verbose = true;
 
 % Create the graphMCMC object
-objmcmc = graphmcmc(objprior, niter, nburn, thin, nchains);
+objmcmc = graphmcmc(objprior, niter, 0, thin, nchains);
 
 % Run initialisation
 init = graphinit(objmcmc, G, niterinit);
@@ -538,18 +564,56 @@ objmcmc = graphmcmcsamples(objmcmc, G, verbose, init);
 % Print summary in text file
 print_summary(['summary_' num2str(p) 'f.txt'], titlenetwork, G, niter, nburn, nchains, thin, p, outpath, tstart)
 
-%%
-
-% Point estimation of the model parameters
-[estimates, C_st] = graphest(objmcmc);
-
 % Save workspace
-save(fullfile(outpath, ['workspace_' num2str(p) 'f.mat']))
+save(fullfile(outpath, ['workspace_' num2str(p) 'f.mat']), '-v7.3')
+
+%% 
+
+% Log posterior approximation
+[lp_nonlat, lp_lat, ll_nonlat, ll_lat] = logpost_approx(objmcmc, G);
+
+%% 
+
+% Compute identifiable parameters
+for ch = 1:size(objmcmc.samples, 2)
+    S = objmcmc.samples(1,ch);
+    objmcmc.samples(1,ch).varsigma1 = -S.alpha .* S.tau.^S.sigma ./ S.sigma;
+    a_sigma = S.Fparam.a.*S.sigma;
+    objmcmc.samples(1,ch).varsigma2 = -a_sigma./S.Fparam.b2;
+    objmcmc.samples(1,ch).varsigma3 = a_sigma.*(S.sigma-S.Fparam.a-1)./(S.Fparam.b2.^2);
+end
+
+    
+%% discard burnin
+objmcmc_noburn = objmcmc;
+objmcmc_noburn.samples = discard(objmcmc.samples, floor(nburn/objmcmc.settings.thin));
+objmcmc_noburn.settings.nburn = nburn;
+
+%% Point estimation of the model parameters
+[estimates, C_st] = graphest(objmcmc_noburn);
 
 %% Plots 
 
 prefix = sprintf('%s_%df_', name, p);
 suffix = '';
+
+%%
+
+% Plot Log posterior approximation
+iter = (1:size(lp_nonlat,1))*thin;
+plot_logpost(lp_nonlat, iter, [], 'Log-posterior', outpath, prefix, '_nonlat');
+plot_logpost(lp_lat, iter, [], 'Log-posterior', outpath, prefix, '_lat');
+
+% Plot log-posterior autocorr
+lp_nonlat_noburn = lp_nonlat(floor(nburn/niter*size(lp_nonlat, 1)):end, :);
+lp_lat_noburn = lp_lat(floor(nburn/niter*size(lp_lat, 1)):end, :);
+plot_autocorr_logpost(lp_nonlat_noburn, thin, 'Log-posterior', outpath, prefix, '_nonlat');
+plot_autocorr_logpost(lp_lat_noburn, thin, 'Log-posterior', outpath, prefix, '_lat');
+
+% Plot cost
+if ~isempty(C_st)
+    plot_cost(C_st, outpath, prefix, suffix);
+end
 
 %%
 
@@ -566,19 +630,10 @@ featnames = {'Liberal', 'Conservative'};
 %%
 
 % Plot traces and histograms
-variables = {'logalpha', 'sigma', 'tau', 'Fparam.a', 'Fparam.b', 'mean_w_rem'};
-namesvar = {'$\log \alpha$', '$\sigma$', '$\tau$', '$a$', '$b$', '$\overline{w}_{\ast}$'};
+variables = {'varsigma1', 'varsigma2', 'varsigma3', 'mean_w_rem'};
+namesvar = {'$\varsigma_1$', '$\varsigma_2$', '$\varsigma_3$', '$\overline{w}_{\ast}$'};
 plot_trace(objmcmc.samples, objmcmc.settings, variables, namesvar, [], outpath, prefix, suffix);
-plot_hist(objmcmc.samples, variables, namesvar, [], ind_features, [], outpath, prefix, suffix);
-
-%%
-
-% Plot cost
-if ~isempty(C_st)
-    plot_cost(C_st, outpath, prefix, suffix);
-end
-
-
+plot_hist(objmcmc_noburn.samples, variables, namesvar, [], ind_features, [], outpath, prefix, suffix);
 
 %%
 
@@ -673,6 +728,7 @@ title('Correlation between features')
 %%
 
 % Plot posterior predictive of degree distribution
-plot_degreepostpred(G, objmcmc, nsamples, 1e-6, outpath, prefix, suffix);
+plot_degreepostpred(G, objmcmc_noburn, ndraws, 1e-6, outpath, prefix, suffix);
+
 ##### SOURCE END #####
 --></body></html>

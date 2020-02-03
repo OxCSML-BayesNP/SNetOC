@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Sparse Networks with Overlapping Communities (SNOC) package: demo_overlappingcommunity</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-11-08"><meta name="DC.source" content="demo_overlappingcommunity.m"><style type="text/css">
+      --><title>Sparse Networks with Overlapping Communities (SNetOC) package: demo_overlappingcommunity</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-01"><meta name="DC.source" content="demo_overlappingcommunity.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,12 +66,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNOC) package: demo_overlappingcommunity</h1><!--introduction--><p>This Matlab script finds overlapping communities in a network of political blogs, using the wrapper function overlapping_community_detection.m. For a full analysis of this dataset, see the Matlab demo demo_polblogs.m.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/misxenia/SNOC">SNOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2016a. Requires the statistics toolbox.</p><p>Last Modified: 07/11/2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Load network of political blogs</a></li><li><a href="#4">Find overlapping communities</a></li><li><a href="#5">Some plots</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>
+  </style></head><body><div class="content"><h1>Sparse Networks with Overlapping Communities (SNetOC) package: demo_overlappingcommunity</h1><!--introduction--><p>This Matlab script finds overlapping communities in a network of political blogs, using the wrapper function overlapping_community_detection.m. For a full analysis of this dataset, see the Matlab demo demo_polblogs.m.</p><p>For downloading the package and information on installation, visit the <a href="https://github.com/OxCSML-BayesNP/SNetOC">SNetOC webpage</a>.</p><p>Reference:</p><div><ul><li>A. Todeschini, X. Miscouridou and F. Caron (2017) <a href="https://arxiv.org/abs/1602.02114">Exchangeable Random Measures for Sparse and Modular Graphs with Overlapping Communities</a>. arXiv:1602.02114.</li></ul></div><p>Authors:</p><div><ul><li><a href="http://adrien.tspace.fr/">A. Todeschini</a>, Inria</li><li><a href="http://csml.stats.ox.ac.uk/people/miscouridou/">X. Miscouridou</a>, University of Oxford</li><li><a href="http://www.stats.ox.ac.uk/~caron/">F. Caron</a>, University of Oxford</li></ul></div><p>Tested on Matlab R2017a. Requires the Statistics toolbox.</p><p>Last Modified: 01/2020</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Load network of political blogs</a></li><li><a href="#4">Find overlapping communities</a></li><li><a href="#5">Some plots</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>
 clear <span class="string">all</span>
 
 <span class="comment">% Add path</span>
 addpath <span class="string">./GGP/</span> <span class="string">./CGGP/</span> <span class="string">./utils/</span>
-</pre><h2>Load network of political blogs<a name="2"></a></h2><p>Data can be downloaded from <a href="https://www.cise.ufl.edu/research/sparse/mat/Newman/polblogs.mat">here</a>.</p><pre class="codeinput">load <span class="string">./data/polblogs/polblogs.mat</span>
+</pre><h2 id="2">Load network of political blogs</h2><p>Data can be downloaded from <a href="https://www.cise.ufl.edu/research/sparse/mat/Newman/polblogs.mat">here</a>.</p><pre class="codeinput">load <span class="string">./data/polblogs/polblogs.mat</span>
 
 titlenetwork = <span class="string">'Political blogosphere Feb. 2005'</span>;
 name = <span class="string">'polblogs'</span>;
@@ -83,6 +83,7 @@ G = Problem.A | Problem.A'; <span class="comment">% make undirected graph</span>
 G = logical(G-diag(diag(G))); <span class="comment">% remove self edges (#3)</span>
 
 <span class="comment">% Collect metadata</span>
+meta = struct;
 meta.name = cellstr(Problem.aux.nodename);
 meta.source = cellstr(Problem.aux.nodesource);
 meta.isright = logical(Problem.aux.nodevalue);
@@ -118,7 +119,7 @@ figure(<span class="string">'name'</span>, <span class="string">'Adjacency matri
 spy(G);
 xlabel(labels{2})
 ylabel(labels{1})
-</pre><img vspace="5" hspace="5" src="demo_overlappingcommunity_02.png" alt=""> <h2>Find overlapping communities<a name="4"></a></h2><pre class="codeinput">p = 2; <span class="comment">% Number of communities</span>
+</pre><img vspace="5" hspace="5" src="demo_overlappingcommunity_02.png" alt=""> <h2 id="4">Find overlapping communities</h2><pre class="codeinput">p = 2; <span class="comment">% Number of communities</span>
 niter = 20000; <span class="comment">% Number of iterations</span>
 [degree_correction, community_affiliation, community_detection] = overlapping_community_detection(G, p, niter);
 </pre><pre class="codeoutput">-----------------------------------
@@ -127,38 +128,37 @@ Start initialisation of the MCMC algorithm for CGGP
 End initialisation
 -----------------------------------
 -----------------------------------
-Start MCMC for CGGP graphs
-Nb of nodes: 1224 - Nb of edges: 16715 (0 missing)
+Start MCMC for undirected CGGP graphs
+Nb of nodes: 1224x1224 - Nb of edges: 16715 (0 missing)
 Nb of chains: 1 - Nb of iterations: 20000
-Nb of parallel workers: 1
-Estimated computation time: 0 hour(s) 2 minute(s)
-Estimated end of computation: 08-Nov-2017 18:01:19 
+Estimated computation time: 0 hour(s) 3 minute(s)
+Estimated end of computation: 01-Feb-2020 17:39:25 
 -----------------------------------
  Markov chain 1/1 
 -----------------------------------
-i=2000 alp=669.22 sig=-0.255 tau=1.98 a=0.23 0.18 b=0.46 0.39 w*=0.56 0.36 b2=0.90 0.78 alp2=562.24 rhmc=0.63 rhyp=0.30 eps=0.025 rwsd=0.049
-i=4000 alp=1604.00 sig=-0.450 tau=3.68 a=0.20 0.15 b=0.39 0.27 w*=0.50 0.41 b2=1.42 1.01 alp2=892.66 rhmc=0.70 rhyp=0.25 eps=0.04 rwsd=0.058
-i=6000 alp=1718.53 sig=-0.453 tau=3.48 a=0.18 0.14 b=0.36 0.31 w*=0.47 0.39 b2=1.24 1.06 alp2=977.03 rhmc=0.56 rhyp=0.22 eps=0.025 rwsd=0.056
-i=8000 alp=1687.01 sig=-0.450 tau=3.93 a=0.18 0.15 b=0.32 0.29 w*=0.47 0.39 b2=1.24 1.12 alp2=911.42 rhmc=0.78 rhyp=0.23 eps=0.025 rwsd=0.056
-i=10000 alp=1799.57 sig=-0.468 tau=3.91 a=0.16 0.13 b=0.29 0.24 w*=0.46 0.41 b2=1.13 0.92 alp2=950.12 rhmc=0.79 rhyp=0.23 eps=0.025 rwsd=0.056
-i=12000 alp=2018.04 sig=-0.458 tau=4.47 a=0.16 0.13 b=0.28 0.20 w*=0.50 0.49 b2=1.24 0.89 alp2=1016.53 rhmc=0.78 rhyp=0.23 eps=0.025 rwsd=0.056
-i=14000 alp=1999.09 sig=-0.459 tau=4.66 a=0.15 0.12 b=0.18 0.19 w*=0.46 0.42 b2=0.84 0.88 alp2=985.82 rhmc=0.78 rhyp=0.23 eps=0.025 rwsd=0.056
-i=16000 alp=2012.28 sig=-0.491 tau=3.99 a=0.14 0.12 b=0.23 0.22 w*=0.55 0.37 b2=0.92 0.88 alp2=1019.78 rhmc=0.78 rhyp=0.23 eps=0.025 rwsd=0.056
-i=18000 alp=1805.01 sig=-0.456 tau=3.90 a=0.14 0.12 b=0.28 0.24 w*=0.50 0.41 b2=1.11 0.95 alp2=970.22 rhmc=0.78 rhyp=0.23 eps=0.025 rwsd=0.056
-i=20000 alp=1790.90 sig=-0.486 tau=3.11 a=0.13 0.12 b=0.27 0.33 w*=0.56 0.42 b2=0.84 1.03 alp2=1032.27 rhmc=0.77 rhyp=0.24 eps=0.025 rwsd=0.056
+i=2000 alp=4886.52 sig=-1.095 tau=3.37 a=0.25 0.22 b=0.71 0.82 w*=0.24 0.18 b2=2.38 2.76 alp2=1289.99 rhmc=0.70 rhyp=0.31 eps=0.026 rwsd=0.053
+i=4000 alp=5582.58 sig=-1.206 tau=2.89 a=0.22 0.19 b=0.97 0.83 w*=0.25 0.16 b2=2.81 2.40 alp2=1553.58 rhmc=0.50 rhyp=0.23 eps=0.029 rwsd=0.055
+i=6000 alp=5337.33 sig=-1.266 tau=2.48 a=0.20 0.18 b=0.97 1.08 w*=0.32 0.26 b2=2.41 2.67 alp2=1687.70 rhmc=0.90 rhyp=0.22 eps=0.013 rwsd=0.057
+i=8000 alp=4691.75 sig=-1.229 tau=2.39 a=0.22 0.18 b=1.13 0.95 w*=0.48 0.25 b2=2.70 2.27 alp2=1603.53 rhmc=0.94 rhyp=0.23 eps=0.013 rwsd=0.057
+i=10000 alp=5270.29 sig=-1.298 tau=2.43 a=0.20 0.17 b=1.10 0.92 w*=0.21 0.16 b2=2.67 2.22 alp2=1664.29 rhmc=0.94 rhyp=0.22 eps=0.013 rwsd=0.057
+i=12000 alp=4878.96 sig=-1.349 tau=2.09 a=0.20 0.18 b=1.35 1.25 w*=0.23 0.25 b2=2.82 2.62 alp2=1804.06 rhmc=0.94 rhyp=0.21 eps=0.013 rwsd=0.057
+i=14000 alp=4490.11 sig=-1.390 tau=1.97 a=0.21 0.18 b=1.50 1.33 w*=0.26 0.24 b2=2.95 2.61 alp2=1754.57 rhmc=0.94 rhyp=0.23 eps=0.013 rwsd=0.057
+i=16000 alp=5801.94 sig=-1.476 tau=2.04 a=0.19 0.16 b=1.86 1.43 w*=0.29 0.24 b2=3.79 2.91 alp2=2032.93 rhmc=0.94 rhyp=0.21 eps=0.013 rwsd=0.057
+i=18000 alp=5696.85 sig=-1.627 tau=1.82 a=0.20 0.15 b=2.03 1.56 w*=0.26 0.30 b2=3.69 2.83 alp2=2149.65 rhmc=0.94 rhyp=0.22 eps=0.013 rwsd=0.057
+i=20000 alp=3738.35 sig=-1.515 tau=1.52 a=0.20 0.17 b=2.30 1.77 w*=0.27 0.19 b2=3.50 2.70 alp2=1976.00 rhmc=0.94 rhyp=0.22 eps=0.013 rwsd=0.057
 -----------------------------------
 End MCMC
-Computation time: 0 hour(s) 1 minute(s)
+Computation time: 0 hour(s) 2 minute(s)
 -----------------------------------
 -----------------------------------
 Start parameters estimation for CGGP graphs: 500 samples
-Estimated end of computation: 08-Nov-2017 18:01:33 (0.0 hours)
+Estimated end of computation: 01-Feb-2020 17:40:17 (0.0 hours)
 |---------------------------------|
 |*********************************|
 End parameters estimation for CGGP graphs
 Computation time: 0.0 hours
 -----------------------------------
-</pre><h2>Some plots<a name="5"></a></h2><pre class="codeinput"><span class="comment">% Identify each feature as liberal or conservative using ground truth</span>
+</pre><h2 id="5">Some plots</h2><pre class="codeinput"><span class="comment">% Identify each feature as liberal or conservative using ground truth</span>
 <span class="comment">% (This step would normally require a human interpretation of the features)</span>
 [~, ind_features] = sort(median(community_affiliation(meta.isright,:), 1)./median(community_affiliation, 1));
 featnames = {<span class="string">'Liberal'</span>, <span class="string">'Conservative'</span>}; <span class="comment">% Name of the interpreted features</span>
@@ -171,24 +171,24 @@ featnames = {<span class="string">'Liberal'</span>, <span class="string">'Conser
 Confusion matrix (counts)
 -------------------------
 Group        : Feat 1 Feat 2 | Total
-Left         :    543     45 |   588
-Right        :     23    613 |   636
-Total        :    566    658 |  1224
+Left         :    532     56 |   588
+Right        :     27    609 |   636
+Total        :    559    665 |  1224
 -------------------------
 Confusion matrix (%)
 -------------------------
 Group        : Feat 1 Feat 2 | Total
-Left         :  44.36   3.68 | 48.04
-Right        :   1.88  50.08 | 51.96
-Total        :  46.24  53.76 |100.00
+Left         :  43.46   4.58 | 48.04
+Right        :   2.21  49.75 | 51.96
+Total        :  45.67  54.33 |100.00
 -------------------------
 Group assignments of features
 -------------------------
 Feat 1: Left
 Feat 2: Right
 -------------------------
-Accuracy = 94.44
-Error = 5.56
+Accuracy = 93.22
+Error = 6.78
 ==========================
 </pre><pre class="codeinput"><span class="comment">% Plot levels of affiliation to each community for a subset of blogs</span>
 color = [0 0 .8; .8 0 0];
@@ -213,9 +213,9 @@ lab = cell(size(names,1), 1);
 plot_nodesfeatures(community_affiliation, ind, ind_features, lab, featnames, color);
 </pre><img vspace="5" hspace="5" src="demo_overlappingcommunity_03.png" alt=""> <pre class="codeinput"><span class="comment">% Plot the graph by clustering the nodes by community with maximum level of affiliation to see block structure</span>
 plot_sortedgraph(G, community_detection, community_detection, ind_features, labels);
-</pre><img vspace="5" hspace="5" src="demo_overlappingcommunity_04.png" alt=""> <img vspace="5" hspace="5" src="demo_overlappingcommunity_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="demo_overlappingcommunity_04.png" alt=""> <img vspace="5" hspace="5" src="demo_overlappingcommunity_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%% Sparse Networks with Overlapping Communities (SNOC) package: demo_overlappingcommunity
+%% Sparse Networks with Overlapping Communities (SNetOC) package: demo_overlappingcommunity
 %
 % This Matlab script finds overlapping communities in a network of
 % political blogs, using the wrapper function
@@ -223,7 +223,7 @@ plot_sortedgraph(G, community_detection, community_detection, ind_features, labe
 % see the Matlab demo demo_polblogs.m.
 %
 % For downloading the package and information on installation, visit the
-% <https://github.com/misxenia/SNOC SNOC webpage>.
+% <https://github.com/OxCSML-BayesNP/SNetOC SNetOC webpage>.
 % 
 % Reference: 
 %
@@ -235,9 +235,9 @@ plot_sortedgraph(G, community_detection, community_detection, ind_features, labe
 % * <http://csml.stats.ox.ac.uk/people/miscouridou/ X. Miscouridou>, University of Oxford
 % * <http://www.stats.ox.ac.uk/~caron/ F. Caron>, University of Oxford
 % 
-% Tested on Matlab R2016a. Requires the statistics toolbox.
+% Tested on Matlab R2017a. Requires the Statistics toolbox.
 %
-% Last Modified: 07/11/2017
+% Last Modified: 01/2020
 %%
 
 close all
@@ -262,6 +262,7 @@ G = Problem.A | Problem.A'; % make undirected graph
 G = logical(G-diag(diag(G))); % remove self edges (#3)
 
 % Collect metadata
+meta = struct;
 meta.name = cellstr(Problem.aux.nodename);
 meta.source = cellstr(Problem.aux.nodesource);
 meta.isright = logical(Problem.aux.nodevalue);
@@ -350,5 +351,6 @@ plot_nodesfeatures(community_affiliation, ind, ind_features, lab, featnames, col
 
 % Plot the graph by clustering the nodes by community with maximum level of affiliation to see block structure
 plot_sortedgraph(G, community_detection, community_detection, ind_features, labels);
+
 ##### SOURCE END #####
 --></body></html>

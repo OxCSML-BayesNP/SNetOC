@@ -39,7 +39,7 @@ to be added to the Matlab path, using the command `addpath` (see the test file).
 
 ### Demos and reproducible results of the article [Todeschini, Miscouridou and Caron (2017)](https://arxiv.org/abs/1602.02114)
 
-- `demo_sparsity.m`: shows empirically the sparsity properties of a range of graph models. [[html version](https://misxenia.github.io/SNetOC/demo_sparsity.html)]
+- `demo_sparsity.m`: shows empirically the sparsity properties of a range of graph models. [[html version](https://OxCSML-BayesNP.github.io/SNetOC/demo_sparsity.html)]
 
 You can run multiple MCMC chains in parallel by calling the `parpool` command 
 before running the following scripts. This requires the Parallel Computing Toolbox.
@@ -63,7 +63,7 @@ before running the following scripts. This requires the Parallel Computing Toolb
 
 # Changes
 
-### [v1.1](https://github.com/OxCSML-BayesNP/SNetOC/releases/tag/v1.0) (2020-01-24)
+### [v1.1](https://github.com/OxCSML-BayesNP/SNetOC/releases/tag/v1.1) (2020-01-24)
 
 - Some fixes
 - Updated demo scripts

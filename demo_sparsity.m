@@ -3,7 +3,7 @@
 % This Matlab script shows empirically the sparsity properties of a range of graph models.
 %
 % For downloading the package and information on installation, visit the
-% <https://github.com/OxCSML-BayesNP/SNetOC SNetOCC webpage>.
+% <https://github.com/OxCSML-BayesNP/SNetOC SNetOC webpage>.
 % 
 % Reference: 
 %
@@ -190,7 +190,7 @@ end
 axis tight
 xlim([10, 2000])
 xlabel('Number of nodes', 'fontsize', fontsize)
-ylabel('Nb of edges / (Nb of nodes)^2', 'fontsize', fontsize)
+ylabel('$Nb of edges / (Nb of nodes)^2$', 'fontsize', fontsize)
 legend(leg,'fontsize', fontsize, 'location', 'southwest', 'interpreter', 'latex')
 legend boxoff
 box off
@@ -226,3 +226,7 @@ end
 if saveworkspace
     save(fullfile(outpath, 'workspace'));
 end
+
+% reset default properties
+set(0,'defaultLineLineWidth', 0.5)
+set(0,'defaultLineMarkerSize', 6)

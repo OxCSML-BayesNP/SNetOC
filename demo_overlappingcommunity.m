@@ -1,4 +1,4 @@
-%% Sparse Networks with Overlapping Communities (SNOC) package: demo_overlappingcommunity
+%% Sparse Networks with Overlapping Communities (SNetOC) package: demo_overlappingcommunity
 %
 % This Matlab script finds overlapping communities in a network of
 % political blogs, using the wrapper function
@@ -6,7 +6,7 @@
 % see the Matlab demo demo_polblogs.m.
 %
 % For downloading the package and information on installation, visit the
-% <https://github.com/OxCSML-BayesNP/SNOC SNOC webpage>.
+% <https://github.com/OxCSML-BayesNP/SNetOC SNetOC webpage>.
 % 
 % Reference: 
 %
@@ -18,7 +18,7 @@
 % * <http://csml.stats.ox.ac.uk/people/miscouridou/ X. Miscouridou>, University of Oxford
 % * <http://www.stats.ox.ac.uk/~caron/ F. Caron>, University of Oxford
 % 
-% Tested on Matlab R2017a. Requires the statistics toolbox.
+% Tested on Matlab R2017a. Requires the Statistics toolbox.
 %
 % Last Modified: 01/2020
 %%
@@ -45,6 +45,7 @@ G = Problem.A | Problem.A'; % make undirected graph
 G = logical(G-diag(diag(G))); % remove self edges (#3)
 
 % Collect metadata
+meta = struct;
 meta.name = cellstr(Problem.aux.nodename);
 meta.source = cellstr(Problem.aux.nodesource);
 meta.isright = logical(Problem.aux.nodevalue);
